@@ -14,7 +14,162 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_conversations: {
+        Row: {
+          context: Json | null
+          created_at: string | null
+          id: string
+          question: string
+          response: string
+          user_id: string
+          was_helpful: boolean | null
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string | null
+          id?: string
+          question: string
+          response: string
+          user_id: string
+          was_helpful?: boolean | null
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string | null
+          id?: string
+          question?: string
+          response?: string
+          user_id?: string
+          was_helpful?: boolean | null
+        }
+        Relationships: []
+      }
+      dashboard_preferences: {
+        Row: {
+          chart_indicators: Json | null
+          favorite_sections: string[] | null
+          id: string
+          layout_config: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          chart_indicators?: Json | null
+          favorite_sections?: string[] | null
+          id?: string
+          layout_config?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          chart_indicators?: Json | null
+          favorite_sections?: string[] | null
+          id?: string
+          layout_config?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tutorial_progress: {
+        Row: {
+          completed: boolean | null
+          completion_time_seconds: number | null
+          created_at: string | null
+          id: string
+          tutorial_id: string
+          user_id: string
+          was_helpful: boolean | null
+        }
+        Insert: {
+          completed?: boolean | null
+          completion_time_seconds?: number | null
+          created_at?: string | null
+          id?: string
+          tutorial_id: string
+          user_id: string
+          was_helpful?: boolean | null
+        }
+        Update: {
+          completed?: boolean | null
+          completion_time_seconds?: number | null
+          created_at?: string | null
+          id?: string
+          tutorial_id?: string
+          user_id?: string
+          was_helpful?: boolean | null
+        }
+        Relationships: []
+      }
+      user_interactions: {
+        Row: {
+          created_at: string | null
+          details: Json | null
+          duration_seconds: number | null
+          id: string
+          interaction_type: Database["public"]["Enums"]["interaction_type"]
+          section: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          details?: Json | null
+          duration_seconds?: number | null
+          id?: string
+          interaction_type: Database["public"]["Enums"]["interaction_type"]
+          section: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          details?: Json | null
+          duration_seconds?: number | null
+          id?: string
+          interaction_type?: Database["public"]["Enums"]["interaction_type"]
+          section?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          age: number | null
+          created_at: string | null
+          generation: string | null
+          id: string
+          personality: string | null
+          preferred_name: string | null
+          skill_level: Database["public"]["Enums"]["skill_level"] | null
+          skill_score: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string | null
+          generation?: string | null
+          id?: string
+          personality?: string | null
+          preferred_name?: string | null
+          skill_level?: Database["public"]["Enums"]["skill_level"] | null
+          skill_score?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          age?: number | null
+          created_at?: string | null
+          generation?: string | null
+          id?: string
+          personality?: string | null
+          preferred_name?: string | null
+          skill_level?: Database["public"]["Enums"]["skill_level"] | null
+          skill_score?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +178,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      interaction_type:
+        | "click"
+        | "hover"
+        | "scroll"
+        | "zoom"
+        | "pan"
+        | "view"
+        | "question"
+        | "tutorial_view"
+      skill_level: "beginner" | "intermediate" | "advanced" | "expert"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +314,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      interaction_type: [
+        "click",
+        "hover",
+        "scroll",
+        "zoom",
+        "pan",
+        "view",
+        "question",
+        "tutorial_view",
+      ],
+      skill_level: ["beginner", "intermediate", "advanced", "expert"],
+    },
   },
 } as const
