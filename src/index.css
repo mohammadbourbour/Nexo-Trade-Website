@@ -1,0 +1,267 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Crypto Dashboard Dark Theme - Cyberpunk/Neon Aesthetic */
+    --background: 229 56% 9%;
+    --foreground: 210 40% 98%;
+
+    --card: 229 40% 12%;
+    --card-foreground: 210 40% 98%;
+    --card-glass: 229 40% 15% / 0.4;
+
+    --popover: 229 50% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Neon Cyan Primary */
+    --primary: 186 100% 44%;
+    --primary-foreground: 229 56% 9%;
+    --primary-glow: 186 100% 60%;
+
+    /* Deep Purple Secondary */
+    --secondary: 250 83% 66%;
+    --secondary-foreground: 210 40% 98%;
+    --secondary-glow: 250 83% 75%;
+
+    /* Sentiment Colors */
+    --positive: 160 84% 39%;
+    --positive-foreground: 210 40% 98%;
+    --positive-glow: 160 84% 50%;
+
+    --negative: 0 72% 60%;
+    --negative-foreground: 210 40% 98%;
+    --negative-glow: 0 72% 70%;
+
+    --neutral: 38 92% 50%;
+    --neutral-foreground: 229 56% 9%;
+
+    --muted: 229 20% 30%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 186 100% 44%;
+    --accent-foreground: 229 56% 9%;
+
+    --destructive: 0 72% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 229 30% 20%;
+    --input: 229 40% 15%;
+    --ring: 186 100% 44%;
+
+    --radius: 0.75rem;
+
+    /* Chart colors */
+    --chart-1: 186 100% 44%;
+    --chart-2: 250 83% 66%;
+    --chart-3: 160 84% 39%;
+    --chart-4: 0 72% 60%;
+    --chart-5: 38 92% 50%;
+
+    /* Enhanced Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(186 100% 44%) 0%, hsl(250 83% 66%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(250 83% 66%) 0%, hsl(330 80% 60%) 100%);
+    --gradient-positive: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(186 100% 44%) 100%);
+    --gradient-negative: linear-gradient(135deg, hsl(0 72% 60%) 0%, hsl(250 83% 66%) 100%);
+    --gradient-neon: linear-gradient(135deg, hsl(186 100% 60%) 0%, hsl(330 80% 60%) 50%, hsl(250 83% 75%) 100%);
+    --gradient-electric: linear-gradient(90deg, hsl(186 100% 50%) 0%, hsl(280 100% 60%) 100%);
+    
+    /* Glass effect */
+    --glass-bg: hsl(229 40% 15% / 0.4);
+    --glass-border: hsl(229 30% 30% / 0.3);
+    
+    /* Enhanced Shadows and glows */
+    --shadow-glow-primary: 0 0 30px hsl(186 100% 44% / 0.4);
+    --shadow-glow-secondary: 0 0 30px hsl(250 83% 66% / 0.4);
+    --shadow-glow-positive: 0 0 30px hsl(160 84% 39% / 0.4);
+    --shadow-glow-negative: 0 0 30px hsl(0 72% 60% / 0.4);
+    --shadow-glow-neon: 0 0 40px hsl(186 100% 60% / 0.5), 0 0 80px hsl(330 80% 60% / 0.3);
+    --shadow-card: 0 10px 40px hsl(229 56% 5% / 0.5);
+    --shadow-intense: 0 0 20px hsl(186 100% 60% / 0.6), 0 0 40px hsl(250 83% 66% / 0.4);
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  /* Gen Alpha Theme - Bright, Playful & Educational */
+  .theme-genAlpha {
+    --primary: 280 100% 65%;
+    --primary-glow: 280 100% 75%;
+    --secondary: 45 100% 60%;
+    --secondary-glow: 45 100% 70%;
+    --accent: 160 100% 50%;
+    --positive: 140 90% 50%;
+    --gradient-neon: linear-gradient(135deg, hsl(280 100% 65%) 0%, hsl(45 100% 60%) 50%, hsl(160 100% 50%) 100%);
+    --shadow-intense: 0 0 30px hsl(280 100% 65% / 0.8), 0 0 60px hsl(45 100% 60% / 0.6);
+    --card: 229 40% 18%;
+    --muted: 229 30% 40%;
+    --border: 229 30% 25%;
+    --radius: 1rem;
+  }
+
+  /* Gen Z Theme - Vibrant & Dynamic */
+  .theme-genZ {
+    --primary: 186 100% 50%;
+    --primary-glow: 186 100% 65%;
+    --secondary: 330 80% 60%;
+    --secondary-glow: 330 80% 70%;
+    --accent: 280 100% 60%;
+    --gradient-neon: linear-gradient(135deg, hsl(186 100% 60%) 0%, hsl(330 80% 60%) 50%, hsl(280 100% 60%) 100%);
+    --shadow-intense: 0 0 25px hsl(186 100% 60% / 0.7), 0 0 50px hsl(330 80% 60% / 0.5);
+    --card: 229 40% 13%;
+    --muted: 229 25% 35%;
+  }
+
+  /* Gen Y (Millennials) Theme - Clean & Balanced */
+  .theme-genY {
+    --primary: 195 100% 45%;
+    --primary-glow: 195 100% 55%;
+    --secondary: 240 60% 55%;
+    --secondary-glow: 240 60% 65%;
+    --accent: 195 100% 45%;
+    --gradient-neon: linear-gradient(135deg, hsl(195 100% 45%) 0%, hsl(240 60% 55%) 100%);
+    --shadow-intense: 0 0 18px hsl(195 100% 45% / 0.5), 0 0 35px hsl(240 60% 55% / 0.4);
+    --card: 229 35% 14%;
+    --muted: 229 20% 38%;
+    --muted-foreground: 215 20% 70%;
+  }
+
+  /* Gen X Theme - Calm & High Contrast */
+  .theme-genX {
+    --primary: 210 100% 50%;
+    --primary-glow: 210 100% 60%;
+    --secondary: 250 70% 55%;
+    --secondary-glow: 250 70% 65%;
+    --accent: 210 100% 50%;
+    --gradient-neon: linear-gradient(135deg, hsl(210 100% 50%) 0%, hsl(250 70% 55%) 100%);
+    --shadow-intense: 0 0 15px hsl(210 100% 50% / 0.4), 0 0 30px hsl(250 70% 55% / 0.3);
+    --card: 229 30% 15%;
+    --muted: 229 15% 40%;
+    --muted-foreground: 215 20% 75%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Generation-specific fonts */
+  .theme-genAlpha {
+    font-family: 'Nunito', 'Comic Neue', 'Inter', sans-serif;
+  }
+
+  .theme-genZ {
+    font-family: 'Poppins', 'Inter', sans-serif;
+  }
+
+  .theme-genY {
+    font-family: 'Roboto', 'Open Sans', sans-serif;
+  }
+
+  .theme-genX {
+    font-family: 'Roboto', 'Open Sans', sans-serif;
+    font-size: 105%; /* Slightly larger for readability */
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-xl bg-card/40 border border-border/50;
+  }
+  
+  .neon-glow {
+    box-shadow: var(--shadow-glow-primary);
+  }
+  
+  .secondary-glow {
+    box-shadow: var(--shadow-glow-secondary);
+  }
+  
+  .positive-glow {
+    box-shadow: var(--shadow-glow-positive);
+  }
+  
+  .negative-glow {
+    box-shadow: var(--shadow-glow-negative);
+  }
+  
+  .intense-glow {
+    box-shadow: var(--shadow-intense);
+  }
+  
+  .neon-border {
+    @apply border-2 border-primary/50;
+    box-shadow: 0 0 20px hsl(186 100% 44% / 0.3);
+  }
+  
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-glow-neon);
+  }
+
+  .theme-genAlpha .hover-lift:hover {
+    transform: translateY(-8px) scale(1.08);
+    animation: pulse-glow 0.8s ease-in-out infinite;
+  }
+
+  .theme-genZ .hover-lift:hover {
+    transform: translateY(-6px) scale(1.05);
+    animation: pulse-glow 1s ease-in-out infinite;
+  }
+
+  .theme-genY .hover-lift:hover {
+    transform: translateY(-3px) scale(1.02);
+  }
+
+  .theme-genX .hover-lift:hover {
+    transform: translateY(-2px) scale(1.01);
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: var(--shadow-intense); }
+    50% { box-shadow: var(--shadow-glow-neon); }
+  }
+  
+  .gradient-text {
+    background: var(--gradient-neon);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .particle-bg {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .particle-bg::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, hsl(186 100% 60% / 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: particle-float 20s linear infinite;
+  }
+  
+  @keyframes particle-float {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-50%, -50%); }
+  }
+}

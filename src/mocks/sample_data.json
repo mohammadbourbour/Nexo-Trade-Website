@@ -1,0 +1,187 @@
+{
+  "fundamental": {
+    "metrics": {
+      "total_articles": 50,
+      "articles_considered": 50,
+      "timestamp": "2025-10-04T12:00:00Z"
+    },
+    "summary": "Overall market sentiment remains cautiously optimistic with strong institutional interest in Bitcoin ETFs driving positive momentum. Ethereum shows steady development progress while altcoins display mixed signals. Key concerns include regulatory uncertainty and macroeconomic headwinds, but technical indicators suggest sustained bullish trends across major assets.",
+    "coins": {
+      "BTC": {
+        "sentiment": "Positive",
+        "score": 0.89,
+        "confidence": 0.92,
+        "reason": "Strong ETF inflows and institutional adoption continue to drive positive sentiment. Recent halving anticipation and regulatory clarity in major markets support bullish outlook.",
+        "evidence_count": 12,
+        "top_examples": [
+          {
+            "i": 0,
+            "headline": "Bitcoin ETF sees record $1.2B inflow as institutional demand surges",
+            "url": "https://example.com/btc-etf-1"
+          },
+          {
+            "i": 1,
+            "headline": "Major banks announce Bitcoin custody services for institutional clients",
+            "url": "https://example.com/btc-custody"
+          },
+          {
+            "i": 2,
+            "headline": "Bitcoin network hashrate hits all-time high ahead of halving event",
+            "url": "https://example.com/btc-hashrate"
+          }
+        ],
+        "history": [0.65, 0.72, 0.78, 0.84, 0.87, 0.89, 0.89]
+      },
+      "ETH": {
+        "sentiment": "Positive",
+        "score": 0.76,
+        "confidence": 0.85,
+        "reason": "Ethereum's transition to proof-of-stake continues to attract developers. Layer 2 scaling solutions show promising adoption metrics and reduced gas fees.",
+        "evidence_count": 10,
+        "top_examples": [
+          {
+            "i": 0,
+            "headline": "Ethereum layer 2 transactions surpass mainnet for first time",
+            "url": "https://example.com/eth-l2"
+          },
+          {
+            "i": 1,
+            "headline": "Major DeFi protocols report 300% growth in Ethereum-based TVL",
+            "url": "https://example.com/eth-defi"
+          },
+          {
+            "i": 2,
+            "headline": "Ethereum developers announce successful Dencun upgrade testnet launch",
+            "url": "https://example.com/eth-dencun"
+          }
+        ],
+        "history": [0.62, 0.68, 0.71, 0.73, 0.75, 0.76, 0.76]
+      },
+      "XRP": {
+        "sentiment": "Neutral",
+        "score": 0.58,
+        "confidence": 0.78,
+        "reason": "Legal clarity emerging but market remains cautious. Cross-border payment partnerships show promise but face competitive pressure from CBDCs.",
+        "evidence_count": 8,
+        "top_examples": [
+          {
+            "i": 0,
+            "headline": "Ripple announces new partnership with Southeast Asian payment processor",
+            "url": "https://example.com/xrp-partnership"
+          },
+          {
+            "i": 1,
+            "headline": "XRP trading volume increases 40% following regulatory developments",
+            "url": "https://example.com/xrp-volume"
+          },
+          {
+            "i": 2,
+            "headline": "Central banks exploring CBDC alternatives challenge XRP's use case",
+            "url": "https://example.com/xrp-cbdc"
+          }
+        ],
+        "history": [0.52, 0.54, 0.56, 0.57, 0.58, 0.58, 0.58]
+      },
+      "SOL": {
+        "sentiment": "Positive",
+        "score": 0.81,
+        "confidence": 0.88,
+        "reason": "Strong network performance recovery and growing NFT/DeFi ecosystem. Developer activity remains high despite past technical challenges.",
+        "evidence_count": 11,
+        "top_examples": [
+          {
+            "i": 0,
+            "headline": "Solana network achieves 100% uptime for 90 consecutive days",
+            "url": "https://example.com/sol-uptime"
+          },
+          {
+            "i": 1,
+            "headline": "Major gaming studios choose Solana for new Web3 game launches",
+            "url": "https://example.com/sol-gaming"
+          },
+          {
+            "i": 2,
+            "headline": "Solana-based DEX trading volume reaches new all-time high",
+            "url": "https://example.com/sol-dex"
+          }
+        ],
+        "history": [0.68, 0.72, 0.75, 0.78, 0.80, 0.81, 0.81]
+      },
+      "DOGE": {
+        "sentiment": "Neutral",
+        "score": 0.52,
+        "confidence": 0.72,
+        "reason": "Meme coin sentiment driven primarily by social media trends and celebrity endorsements. Limited fundamental developments but strong community support.",
+        "evidence_count": 6,
+        "top_examples": [
+          {
+            "i": 0,
+            "headline": "Dogecoin community celebrates 10th anniversary with charitable initiatives",
+            "url": "https://example.com/doge-anniversary"
+          },
+          {
+            "i": 1,
+            "headline": "Major retailer adds Dogecoin as payment option for online purchases",
+            "url": "https://example.com/doge-payment"
+          },
+          {
+            "i": 2,
+            "headline": "Social media sentiment analysis shows mixed signals for Dogecoin",
+            "url": "https://example.com/doge-sentiment"
+          }
+        ],
+        "history": [0.48, 0.49, 0.50, 0.51, 0.52, 0.52, 0.52]
+      }
+    }
+  },
+  "technical": {
+    "timestamp": "2025-10-04T12:00:00Z",
+    "coins": {
+      "BTC": {
+        "rsi": 68,
+        "macd_signal": "bullish",
+        "ma_short": 73000,
+        "ma_long": 68000,
+        "volatility": 0.12,
+        "ta_score": 0.78,
+        "history": [0.62, 0.68, 0.72, 0.75, 0.77, 0.78, 0.78]
+      },
+      "ETH": {
+        "rsi": 64,
+        "macd_signal": "bullish",
+        "ma_short": 3850,
+        "ma_long": 3600,
+        "volatility": 0.15,
+        "ta_score": 0.72,
+        "history": [0.58, 0.64, 0.68, 0.70, 0.71, 0.72, 0.72]
+      },
+      "XRP": {
+        "rsi": 52,
+        "macd_signal": "neutral",
+        "ma_short": 0.62,
+        "ma_long": 0.58,
+        "volatility": 0.18,
+        "ta_score": 0.55,
+        "history": [0.48, 0.51, 0.53, 0.54, 0.55, 0.55, 0.55]
+      },
+      "SOL": {
+        "rsi": 66,
+        "macd_signal": "bullish",
+        "ma_short": 142,
+        "ma_long": 128,
+        "volatility": 0.22,
+        "ta_score": 0.76,
+        "history": [0.64, 0.68, 0.71, 0.73, 0.75, 0.76, 0.76]
+      },
+      "DOGE": {
+        "rsi": 48,
+        "macd_signal": "bearish",
+        "ma_short": 0.082,
+        "ma_long": 0.078,
+        "volatility": 0.28,
+        "ta_score": 0.42,
+        "history": [0.38, 0.40, 0.41, 0.42, 0.42, 0.42, 0.42]
+      }
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "dashboard": {
+    "title": "CoTrader",
+    "subtitle": "AI-Powered Trading Analytics",
+    "lastUpdate": "Last Update",
+    "nextUpdate": "Next Update",
+    "refresh": "Refresh",
+    "autoRefresh": "Auto Refresh"
+  },
+  "tradingStyle": {
+    "short": "Short-term",
+    "mid": "Mid-term",
+    "long": "Long-term"
+  },
+  "tabs": {
+    "combined": "Combined",
+    "fundamental": "Fundamental",
+    "technical": "Technical",
+    "user-technical": "Chart Analysis",
+    "news-analysis": "News Analysis",
+    "signal-aggregator": "Signal Aggregator",
+    "reports": "Reports"
+  },
+  "market": {
+    "overview": "Market Overview",
+    "riskIndex": "Risk Index",
+    "verdict": {
+      "bullish": "Bullish",
+      "neutral": "Neutral",
+      "bearish": "Bearish"
+    }
+  },
+  "coin": {
+    "score": "Score",
+    "confidence": "Confidence",
+    "viewDetails": "View Details",
+    "sentiment": {
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative"
+    }
+  },
+  "signals": {
+    "buy": "BUY",
+    "sell": "SELL",
+    "hold": "HOLD",
+    "finalScore": "Final Score",
+    "finalConfidence": "Final Confidence",
+    "decision": "Decision"
+  },
+  "profile": {
+    "title": "Trader Profile",
+    "tradingStyle": "Trading Style",
+    "riskTolerance": "Risk Tolerance",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "weights": "Indicator Weights",
+    "fundamental": "Fundamental",
+    "technical": "Technical",
+    "savePreferences": "Save Preferences"
+  },
+  "gamification": {
+    "leaderboard": "Leaderboard",
+    "yourRank": "Your Rank",
+    "xp": "XP",
+    "coins": "Coins",
+    "badges": "Badges",
+    "achievements": "Achievements",
+    "topAnalyst": "Top 1% Analyst",
+    "riskMaster": "Risk Master",
+    "accuracyStreak": "Accuracy Streak"
+  },
+  "ai": {
+    "assistant": "AI Assistant",
+    "askQuestion": "Ask me anything about signals, indicators, or risk management...",
+    "send": "Send",
+    "thinking": "Thinking...",
+    "genZWelcome": "Hey! 👋 Ready to level up your trading game? Let's make some moves! 🚀",
+    "genXWelcome": "Welcome! Let's analyze the markets together and make informed decisions."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "newAnalysis": "New analysis available",
+    "signalChange": "Signal change detected",
+    "clear": "Clear All"
+  },
+  "performance": {
+    "title": "Performance / Backtest Info",
+    "description": "Historical performance metrics and simulated results",
+    "accuracy": "Signal Accuracy",
+    "last30Days": "Last 30 days",
+    "avgProfit": "Average Profit",
+    "perSignal": "Per signal",
+    "totalSignals": "Total Signals",
+    "lastMonth": "Last month",
+    "winRate": "Win Rate",
+    "successful": "Successful trades",
+    "disclaimer": "These are sample backtest results for demonstration purposes only."
+  },
+  "partners": {
+    "hero": {
+      "title": "For Partners & Investors",
+      "subtitle": "AI-Powered Trading Analytics Platform"
+    },
+    "backToDashboard": "Back to Dashboard",
+    "problem": {
+      "title": "Market Problem",
+      "content": "Most existing trading tools are either overly complex or limited in analytical depth.\n\nTraders are forced to switch between multiple platforms to gather technical, fundamental, and sentiment data — wasting time and reducing accuracy."
+    },
+    "solution": {
+      "title": "Our Solution",
+      "content": "Our platform, CoTrader, is a modular AI-powered analytics system that integrates seamlessly into any JavaScript-based website.\n\nIt combines AI sentiment analysis, automated technical insights, and a signal aggregator for unified, actionable intelligence.\n\nThe system adapts to different markets — crypto, gold, stocks, and forex — and aligns its signals with the trader's preferred style (short-, mid-, or long-term)."
+    },
+    "outputs": {
+      "title": "Sample Outputs",
+      "content": "• BUY / SELL / NEUTRAL signals with confidence levels\n• Combined AI-driven insights for top assets\n• Real or simulated examples of platform outputs\n• Multi-timeframe analysis with risk assessment"
+    },
+    "business": {
+      "title": "Business Model",
+      "content": "• B2B SaaS licensing for exchanges and trading platforms\n• API access for startups and AI bots (Telegram, Discord)\n• Subscription plans for pro traders\n• White-label solutions for financial institutions"
+    },
+    "roadmap": {
+      "title": "Growth Roadmap (Next 6 Months)",
+      "content": "✅ Finalize MVP & internal testing\n🔄 Integrate live market data and TradingView charts\n🤝 Pilot partnerships with exchanges & brokers\n🚀 Expand coverage to gold and forex markets\n💼 Secure funding for Phase II scaling"
+    },
+    "cta": {
+      "title": "Ready to Partner with Us?",
+      "subtitle": "Let's discuss how CoTrader can transform your trading platform",
+      "button": "Contact Us"
+    }
+  }
+}
