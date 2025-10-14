@@ -27,6 +27,11 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { NavigationDropdown } from "./NavigationDropdown";
 import { WelcomeMessage } from "./WelcomeMessage";
 import { LogoutButton } from "./LogoutButton";
+import { EnhancedAIAssistant } from "./EnhancedAIAssistant";
+import { TutorialSystem } from "./TutorialSystem";
+import { useBehaviorTracking } from "@/hooks/useBehaviorTracking";
+import { useSkillScoring } from "@/hooks/useSkillScoring";
+import { useAdaptiveContent } from "@/hooks/useAdaptiveContent";
 import { aggregateSignals, calculateMarketRisk } from "@/lib/aggregator";
 import { useToast } from "@/hooks/use-toast";
 
@@ -98,6 +103,11 @@ export function CryptoSentimentProDashboard({
   const [showAchievement, setShowAchievement] = useState(false);
   const [achievementData, setAchievementData] = useState({ title: "", description: "" });
   const { toast } = useToast();
+  
+  // Adaptive features
+  const { trackSectionView, trackClick } = useBehaviorTracking();
+  const { skillProfile, calculateSkillScore } = useSkillScoring();
+  const { shouldShowTutorials, getMaxIndicators } = useAdaptiveContent();
 
   // Use profile weights instead of local state
   const weights = profile.weights;
@@ -140,6 +150,9 @@ export function CryptoSentimentProDashboard({
       addXP(10);
       addCoins(5);
       
+      // Calculate skill score periodically
+      calculateSkillScore();
+      
       // Check for badge achievements
       if (profile.xp > 0 && profile.xp % 1000 === 10) {
         setAchievementData({
@@ -151,6 +164,11 @@ export function CryptoSentimentProDashboard({
       }
     }
   }, [data, isRefreshing]);
+
+  // Track section views
+  useEffect(() => {
+    trackSectionView(viewMode);
+  }, [viewMode]);
 
   const fetchData = async () => {
     setIsRefreshing(true);
@@ -226,6 +244,15 @@ export function CryptoSentimentProDashboard({
         onClose={() => setShowAchievement(false)}
       />
 
+      {/* Enhanced AI Assistant */}
+      <EnhancedAIAssistant
+        currentSection={viewMode}
+        contextData={{ data, marketRisk, aggregatedData }}
+      />
+
+      {/* Tutorial System */}
+      <TutorialSystem currentSection={viewMode} />
+
       {/* Top Bar */}
       <header className="glass-card border-b sticky top-0 z-50 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4">
@@ -259,7 +286,10 @@ export function CryptoSentimentProDashboard({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate("/partners")}
+                  onClick={() => {
+                    trackClick('header', { action: 'navigate_partners' });
+                    navigate("/partners");
+                  }}
                   className="gap-2"
                 >
                   <Users className="w-4 h-4" />

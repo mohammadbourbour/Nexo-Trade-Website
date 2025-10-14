@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/select";
 import { useUserProfile, ExperienceLevel, Personality } from "@/hooks/useUserProfile";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const steps = [
   {
@@ -29,6 +31,7 @@ const steps = [
 
 export function Onboarding() {
   const { updateProfile, completeOnboarding } = useUserProfile();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     preferredName: "",
@@ -42,7 +45,7 @@ export function Onboarding() {
     age: "",
   });
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep === 0) {
       setCurrentStep(1);
     } else {
@@ -68,19 +71,84 @@ export function Onboarding() {
       // Clear errors
       setErrors({ preferredName: "", age: "" });
       
-      // Submit and complete onboarding with loading transition
-      updateProfile({
-        preferredName: formData.preferredName.trim(),
-        age: parseInt(formData.age),
-        gender: formData.gender || null,
-        experienceLevel: formData.experienceLevel,
-        personality: formData.personality,
-      });
-      
-      // Small delay for smooth transition
-      setTimeout(() => {
-        completeOnboarding();
-      }, 300);
+      try {
+        // Submit and complete onboarding with loading transition
+        updateProfile({
+          preferredName: formData.preferredName.trim(),
+          age: parseInt(formData.age),
+          gender: formData.gender || null,
+          experienceLevel: formData.experienceLevel,
+          personality: formData.personality,
+        });
+
+        // Sync with database
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          // Calculate initial skill score based on experience
+          let initialSkillScore = 1;
+          let skillLevel: 'beginner' | 'intermediate' | 'advanced' | 'expert' = 'beginner';
+          
+          if (formData.experienceLevel === 'beginner') {
+            initialSkillScore = 2;
+            skillLevel = 'beginner';
+          } else if (formData.experienceLevel === 'intermediate') {
+            initialSkillScore = 5;
+            skillLevel = 'intermediate';
+          } else if (formData.experienceLevel === 'advanced') {
+            initialSkillScore = 8;
+            skillLevel = 'advanced';
+          }
+
+          // Get generation from age
+          const currentYear = new Date().getFullYear();
+          const birthYear = currentYear - parseInt(formData.age);
+          let generation = 'genY';
+          if (birthYear >= 2010) generation = 'genAlpha';
+          else if (birthYear >= 1997) generation = 'genZ';
+          else if (birthYear >= 1981) generation = 'genY';
+          else generation = 'genX';
+
+          await supabase.from('user_profiles').upsert({
+            user_id: user.id,
+            preferred_name: formData.preferredName.trim(),
+            age: parseInt(formData.age),
+            generation,
+            skill_level: skillLevel,
+            skill_score: initialSkillScore,
+            personality: formData.personality,
+          });
+
+          // Create default dashboard preferences
+          await supabase.from('dashboard_preferences').upsert({
+            user_id: user.id,
+            chart_indicators: [],
+            layout_config: {},
+            favorite_sections: [],
+          });
+
+          toast({
+            title: "Profile Created! 🎉",
+            description: "Your adaptive dashboard is ready!",
+          });
+        }
+        
+        // Small delay for smooth transition
+        setTimeout(() => {
+          completeOnboarding();
+        }, 300);
+      } catch (error) {
+        console.error('Error saving profile:', error);
+        toast({
+          title: "Error",
+          description: "Failed to save profile. Continuing anyway...",
+          variant: "destructive",
+        });
+        
+        // Still complete onboarding even if DB save fails
+        setTimeout(() => {
+          completeOnboarding();
+        }, 300);
+      }
     }
   };
 
