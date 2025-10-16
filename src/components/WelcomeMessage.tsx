@@ -3,9 +3,9 @@ import { Sparkles } from "lucide-react";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
 export function WelcomeMessage() {
-  const { userProfile } = useUserProfile();
+  const { userProfile, loading } = useUserProfile();
 
-  if (!userProfile.preferredName) return null;
+  if (loading || !userProfile.preferredName) return null;
 
   const generationLabels = {
     genAlpha: "Gen Alpha",

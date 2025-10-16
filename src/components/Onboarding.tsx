@@ -29,7 +29,11 @@ const steps = [
   },
 ];
 
-export function Onboarding() {
+interface OnboardingProps {
+  onComplete?: () => void;
+}
+
+export function Onboarding({ onComplete }: OnboardingProps) {
   const { updateProfile, completeOnboarding } = useUserProfile();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
@@ -135,6 +139,7 @@ export function Onboarding() {
         // Small delay for smooth transition
         setTimeout(() => {
           completeOnboarding();
+          onComplete?.();
         }, 300);
       } catch (error) {
         console.error('Error saving profile:', error);
@@ -147,6 +152,7 @@ export function Onboarding() {
         // Still complete onboarding even if DB save fails
         setTimeout(() => {
           completeOnboarding();
+          onComplete?.();
         }, 300);
       }
     }
