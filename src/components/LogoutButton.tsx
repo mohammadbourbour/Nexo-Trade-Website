@@ -1,6 +1,10 @@
 import { LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,9 +19,26 @@ import {
 
 export function LogoutButton() {
   const { resetProfile } = useUserProfile();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleLogout = () => {
-    resetProfile();
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      resetProfile();
+      toast({
+        title: t("auth.logoutSuccess") || "Logged out successfully",
+        description: t("auth.logoutDescription") || "See you next time!",
+      });
+      navigate("/auth");
+    } catch (error: any) {
+      toast({
+        title: t("auth.logoutError") || "Logout failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -25,20 +46,19 @@ export function LogoutButton() {
       <AlertDialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <LogOut className="w-4 h-4" />
-          <span className="hidden sm:inline">Logout</span>
+          <span className="hidden sm:inline">{t("auth.logout") || "Logout"}</span>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure you want to logout?</AlertDialogTitle>
+          <AlertDialogTitle>{t("auth.logoutConfirm") || "Are you sure you want to logout?"}</AlertDialogTitle>
           <AlertDialogDescription>
-            This will clear your profile data and return you to the onboarding screen.
-            You can always log back in with a new profile.
+            {t("auth.logoutMessage") || "You will be redirected to the login page."}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleLogout}>Logout</AlertDialogAction>
+          <AlertDialogCancel>{t("auth.cancel") || "Cancel"}</AlertDialogCancel>
+          <AlertDialogAction onClick={handleLogout}>{t("auth.logout") || "Logout"}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { RefreshCw, TrendingUp, TrendingDown, Minus, Users } from "lucide-react";
+import { RefreshCw, TrendingUp, TrendingDown, Minus, Users, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { TraderProfilePanel } from "./TraderProfilePanel";
@@ -283,6 +283,18 @@ export function CryptoSentimentProDashboard({
               {/* Control Buttons */}
               <div className="flex items-center gap-2">
                 <LogoutButton />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    trackClick('header', { action: 'navigate_tutorials' });
+                    navigate("/tutorials");
+                  }}
+                  className="gap-2"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span className="hidden sm:inline">{t("tutorials.title")}</span>
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"

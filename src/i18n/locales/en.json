@@ -1,6 +1,6 @@
 {
   "dashboard": {
-    "title": "CoTrader",
+    "title": "Nexo-Trade",
     "subtitle": "AI-Powered Trading Analytics",
     "lastUpdate": "Last Update",
     "nextUpdate": "Next Update",
@@ -110,7 +110,7 @@
     },
     "solution": {
       "title": "Our Solution",
-      "content": "Our platform, CoTrader, is a modular AI-powered analytics system that integrates seamlessly into any JavaScript-based website.\n\nIt combines AI sentiment analysis, automated technical insights, and a signal aggregator for unified, actionable intelligence.\n\nThe system adapts to different markets — crypto, gold, stocks, and forex — and aligns its signals with the trader's preferred style (short-, mid-, or long-term)."
+      "content": "Our platform, Nexo-Trade, is a modular AI-powered analytics system that integrates seamlessly into any JavaScript-based website.\n\nIt combines AI sentiment analysis, automated technical insights, and a signal aggregator for unified, actionable intelligence.\n\nThe system adapts to different markets — crypto, gold, stocks, and forex — and aligns its signals with the trader's preferred style (short-, mid-, or long-term)."
     },
     "outputs": {
       "title": "Sample Outputs",
@@ -126,8 +126,69 @@
     },
     "cta": {
       "title": "Ready to Partner with Us?",
-      "subtitle": "Let's discuss how CoTrader can transform your trading platform",
+      "subtitle": "Let's discuss how Nexo-Trade can transform your trading platform",
       "button": "Contact Us"
+    }
+  },
+  "auth": {
+    "welcome": "Welcome",
+    "welcomeDescription": "Sign in to access your trading dashboard",
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "confirmPassword": "Confirm Password",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password",
+    "namePlaceholder": "Enter your name",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "loginSuccess": "Login successful!",
+    "welcomeBack": "Welcome back to Nexo-Trade",
+    "signupSuccess": "Account created!",
+    "checkEmail": "Please check your email to verify your account",
+    "loginError": "Login failed",
+    "signupError": "Signup failed",
+    "validationError": "Validation error",
+    "invalidCredentials": "Invalid email or password",
+    "enterEmail": "Enter email",
+    "enterEmailFirst": "Please enter your email first",
+    "resetEmailSent": "Reset email sent",
+    "checkEmailReset": "Please check your email for password reset instructions",
+    "resetError": "Reset failed",
+    "loggingIn": "Logging in...",
+    "signingUp": "Creating account...",
+    "passwordWeak": "Weak password",
+    "passwordMedium": "Medium strength",
+    "passwordStrong": "Strong password",
+    "logout": "Logout",
+    "logoutSuccess": "Logged out successfully",
+    "logoutDescription": "See you next time!",
+    "logoutError": "Logout failed",
+    "logoutConfirm": "Are you sure you want to logout?",
+    "logoutMessage": "You will be redirected to the login page.",
+    "cancel": "Cancel"
+  },
+  "tutorials": {
+    "title": "Learning Center",
+    "subtitle": "Personalized tutorials based on your experience level",
+    "backToDashboard": "Back to Dashboard",
+    "all": "All Tutorials",
+    "videos": "Videos",
+    "interactive": "Interactive",
+    "reading": "Reading",
+    "start": "Start Tutorial",
+    "review": "Review",
+    "genAlpha": "Beginner Friendly",
+    "genZ": "Intermediate Level",
+    "genY": "Advanced Content",
+    "genX": "Expert Level",
+    "type": {
+      "video": "Video",
+      "interactive": "Interactive",
+      "text": "Reading"
     }
   }
 }

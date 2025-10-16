@@ -54,7 +54,7 @@ export default function PartnersInvestors() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Button
             variant="ghost"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
             className="gap-2 neon-glow"
           >
             <ArrowLeft className="w-4 h-4" />
