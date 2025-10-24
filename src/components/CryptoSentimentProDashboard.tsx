@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+// src/components/CryptoSentimentProDashboard.tsx
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { RefreshCw, TrendingUp, TrendingDown, Minus, Users, BookOpen } from "lucide-react";
+import { RefreshCw, TrendingUp, Users, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { TraderProfilePanel } from "./TraderProfilePanel";
@@ -22,7 +23,7 @@ import { ReportsTab } from "./crypto-dashboard/ReportsTab";
 import { RefreshControl } from "./crypto-dashboard/RefreshControl";
 import { PerformanceBacktest } from "./crypto-dashboard/PerformanceBacktest";
 import { CategorySection } from "./CategorySection";
-import { Onboarding } from "./Onboarding";
+// Onboarding removed intentionally
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { NavigationDropdown } from "./NavigationDropdown";
 import { WelcomeMessage } from "./WelcomeMessage";
@@ -76,7 +77,6 @@ export interface DashboardData {
   technical: TechnicalData;
 }
 
-type TradingStyle = "short" | "mid" | "long";
 type ViewMode = "fundamental" | "technical" | "combined" | "reports" | "user-technical" | "news-analysis" | "signal-aggregator";
 
 interface CryptoSentimentProDashboardProps {
@@ -92,8 +92,9 @@ export function CryptoSentimentProDashboard({
 }: CryptoSentimentProDashboardProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { profile, addXP, addCoins, addBadge } = useTraderProfile();
-  const { userProfile } = useUserProfile();
+  const location = useLocation();
+  const { profile, addXP, addCoins } = useTraderProfile();
+  const { userProfile, loading: profileLoading, error: profileError } = useUserProfile() as any;
   const [data, setData] = useState<DashboardData | null>(propData || null);
   const [viewMode, setViewMode] = useState<ViewMode>("combined");
   const [autoRefreshInterval, setAutoRefreshInterval] = useState<number>(0);
@@ -103,107 +104,137 @@ export function CryptoSentimentProDashboard({
   const [showAchievement, setShowAchievement] = useState(false);
   const [achievementData, setAchievementData] = useState({ title: "", description: "" });
   const { toast } = useToast();
-  
-  // Adaptive features
+
   const { trackSectionView, trackClick } = useBehaviorTracking();
-  const { skillProfile, calculateSkillScore } = useSkillScoring();
-  const { shouldShowTutorials, getMaxIndicators } = useAdaptiveContent();
+  const { calculateSkillScore } = useSkillScoring();
+  const { shouldShowTutorials } = useAdaptiveContent();
 
-  // Use profile weights instead of local state
-  const weights = profile.weights;
-  const tradingStyle = profile.tradingStyle;
+  // prevent multiple redirects from different components (Auth + Dashboard)
+  const redirectToWelcomeRef = useRef(false);
 
-  // Fetch data on mount if no prop data provided
+  // If backend is offline (profileError) we avoid redirecting to welcome to prevent flash/loop.
+  useEffect(() => {
+    if (profileLoading) return; // still loading profile - wait
+
+    try {
+      // If we have a concrete userProfile and onboarding not completed -> redirect once
+      if (userProfile && userProfile.hasCompletedOnboarding === false) {
+        if (!redirectToWelcomeRef.current && location.pathname !== "/welcome") {
+          redirectToWelcomeRef.current = true;
+          // small delay so other listeners (Auth) can finish without race
+          setTimeout(() => {
+            navigate("/welcome", { replace: true });
+          }, 50);
+        }
+        return;
+      }
+
+      // If there was an explicit error fetching profile (backend offline),
+      // we DO NOT redirect to /welcome — allow dashboard to show cached/mock data.
+      if (profileError) {
+        console.warn("userProfile fetch error (backend might be offline):", profileError);
+        toast?.({
+          title: "Backend unreachable",
+          description: "Showing cached data or mock content. Full features may be limited.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // If profile finished loading and no profile at all (userProfile === null),
+      // we redirect to /welcome but still guard with ref and check location to avoid duplicate navigations.
+      if (userProfile === null && !profileLoading) {
+        if (!redirectToWelcomeRef.current && location.pathname !== "/welcome") {
+          redirectToWelcomeRef.current = true;
+          setTimeout(() => {
+            navigate("/welcome", { replace: true });
+          }, 50);
+        }
+      }
+    } catch (e) {
+      console.error("Error in onboarding redirect logic:", e);
+    }
+    // we intentionally depend only on these keys
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userProfile, profileLoading, profileError, navigate, location.pathname]);
+
+  // fetch data on mount if not provided via props
   useEffect(() => {
     if (!propData) {
       fetchData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Auto-refresh timer
+  // Auto refresh
   useEffect(() => {
     if (autoRefreshInterval > 0) {
-      const interval = setInterval(() => {
-        fetchData();
-      }, autoRefreshInterval * 60 * 1000);
-
-      return () => clearInterval(interval);
+      const id = setInterval(fetchData, autoRefreshInterval * 60 * 1000);
+      return () => clearInterval(id);
     }
   }, [autoRefreshInterval]);
 
-  // Countdown for next update
+  // nextUpdate countdown
   useEffect(() => {
-    if (autoRefreshInterval > 0) {
-      const interval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - lastUpdate.getTime()) / 1000);
-        const remaining = autoRefreshInterval * 60 - elapsed;
-        setNextUpdate(remaining > 0 ? remaining : 0);
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
+    if (autoRefreshInterval <= 0) return;
+    const id = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - lastUpdate.getTime()) / 1000);
+      const remaining = autoRefreshInterval * 60 - elapsed;
+      setNextUpdate(remaining > 0 ? remaining : 0);
+    }, 1000);
+    return () => clearInterval(id);
   }, [autoRefreshInterval, lastUpdate]);
 
-  // Gamification: Award XP on refresh
+  // gamification side-effects when data arrives
   useEffect(() => {
     if (data && !isRefreshing) {
-      addXP(10);
-      addCoins(5);
-      
-      // Calculate skill score periodically
-      calculateSkillScore();
-      
-      // Check for badge achievements
-      if (profile.xp > 0 && profile.xp % 1000 === 10) {
-        setAchievementData({
-          title: "Level Up!",
-          description: `You've reached ${Math.floor(profile.xp / 1000)} level!`,
-        });
-        setShowAchievement(true);
-        setTimeout(() => setShowAchievement(false), 5000);
+      try {
+        addXP?.(10);
+        addCoins?.(5);
+        calculateSkillScore?.();
+        if (profile?.xp > 0 && profile?.xp % 1000 === 10) {
+          setAchievementData({
+            title: "Level Up!",
+            description: `You've reached ${Math.floor(profile.xp / 1000)} level!`,
+          });
+          setShowAchievement(true);
+          setTimeout(() => setShowAchievement(false), 5000);
+        }
+      } catch (e) {
+        console.warn("Gamification hook issue:", e);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isRefreshing]);
 
-  // Track section views
   useEffect(() => {
-    trackSectionView(viewMode);
+    trackSectionView?.(viewMode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewMode]);
 
   const fetchData = async () => {
     setIsRefreshing(true);
     try {
-      // Try to fetch from API
-      const response = await fetch(apiEndpoint);
-      if (response.ok) {
-        const fetchedData = await response.json();
-        setData(fetchedData);
-        setLastUpdate(new Date());
-        
-        // Cache in localStorage
-        localStorage.setItem("dashboard-cache", JSON.stringify(fetchedData));
-        
-        toast({
-          title: "Data refreshed",
-          description: "Latest market data loaded successfully",
-        });
-      } else {
-        throw new Error("Failed to fetch data");
-      }
-    } catch (error) {
-      console.error("Fetch error:", error);
-      
-      // Try to load from cache
+      const res = await fetch(apiEndpoint);
+      if (!res.ok) throw new Error("Failed to fetch");
+      const json = await res.json();
+      setData(json);
+      setLastUpdate(new Date());
+      localStorage.setItem("dashboard-cache", JSON.stringify(json));
+      toast?.({ title: "Data refreshed", description: "Latest market data loaded successfully" });
+    } catch (err) {
+      console.error("fetchData error:", err);
       const cached = localStorage.getItem("dashboard-cache");
       if (cached) {
         setData(JSON.parse(cached));
-        toast({
+        toast?.({
           title: "Using cached data",
           description: "Could not fetch live data, showing cached version",
           variant: "destructive",
         });
       } else {
-        toast({
+        // if no cache, we keep data null so loading UI shows
+        toast?.({
           title: "Error loading data",
           description: "Please check your connection and try again",
           variant: "destructive",
@@ -214,6 +245,12 @@ export function CryptoSentimentProDashboard({
     }
   };
 
+  // If we're actively redirecting, don't render the dashboard to avoid flashes
+  if (redirectToWelcomeRef.current) {
+    return null;
+  }
+
+  // If no data available yet, show loading (this prevents white/blank screen)
   if (!data) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -226,14 +263,9 @@ export function CryptoSentimentProDashboard({
   }
 
   const marketRisk = calculateMarketRisk(data);
-  const aggregatedData = aggregateSignals(data, weights);
+  const aggregatedData = aggregateSignals(data, profile?.weights ?? { fundamental: 0.6, technical: 0.4 });
   const avgScore = Object.values(aggregatedData).reduce((sum, coin) => sum + coin.final_score, 0) / COINS.length;
   const marketVerdict = avgScore >= 0.65 ? "bullish" : avgScore <= 0.35 ? "bearish" : "neutral";
-
-  // Show onboarding if not completed
-  if (!userProfile.hasCompletedOnboarding) {
-    return <Onboarding />;
-  }
 
   return (
     <div className="min-h-screen bg-background particle-bg">
@@ -244,16 +276,9 @@ export function CryptoSentimentProDashboard({
         onClose={() => setShowAchievement(false)}
       />
 
-      {/* Enhanced AI Assistant */}
-      <EnhancedAIAssistant
-        currentSection={viewMode}
-        contextData={{ data, marketRisk, aggregatedData }}
-      />
-
-      {/* Tutorial System */}
+      <EnhancedAIAssistant currentSection={viewMode} contextData={{ data, marketRisk, aggregatedData }} />
       <TutorialSystem currentSection={viewMode} />
 
-      {/* Top Bar */}
       <header className="glass-card border-b sticky top-0 z-50 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -272,38 +297,24 @@ export function CryptoSentimentProDashboard({
                 <TrendingUp className="w-6 h-6 text-primary-foreground" />
               </motion.div>
               <div>
-                <h1 className="text-2xl font-bold gradient-text">
-                  {t("dashboard.title")}
-                </h1>
+                <h1 className="text-2xl font-bold gradient-text">{t("dashboard.title")}</h1>
                 <p className="text-sm text-muted-foreground">{t("dashboard.subtitle")}</p>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              {/* Control Buttons */}
               <div className="flex items-center gap-2">
                 <LogoutButton />
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    trackClick('header', { action: 'navigate_tutorials' });
-                    navigate("/tutorials");
-                  }}
+                  onClick={() => { trackClick?.('header', { action: 'navigate_tutorials' }); navigate("/tutorials"); }}
                   className="gap-2"
                 >
                   <BookOpen className="w-4 h-4" />
                   <span className="hidden sm:inline">{t("tutorials.title")}</span>
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    trackClick('header', { action: 'navigate_partners' });
-                    navigate("/partners");
-                  }}
-                  className="gap-2"
-                >
+                <Button variant="outline" size="sm" onClick={() => { trackClick?.('header', { action: 'navigate_partners' }); navigate("/partners"); }} className="gap-2">
                   <Users className="w-4 h-4" />
                   <span className="hidden sm:inline">Partners</span>
                 </Button>
@@ -314,7 +325,6 @@ export function CryptoSentimentProDashboard({
                 <LanguageSwitcher />
               </div>
 
-              {/* Refresh Controls */}
               <RefreshControl
                 isRefreshing={isRefreshing}
                 onRefresh={fetchData}
@@ -328,79 +338,44 @@ export function CryptoSentimentProDashboard({
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        {/* Welcome Message */}
         <WelcomeMessage />
-
-        {/* Navigation Dropdown */}
         <div className="mb-8 flex justify-center">
           <NavigationDropdown viewMode={viewMode} onViewModeChange={setViewMode} />
         </div>
 
         <AnimatePresence mode="wait">
-          <motion.div
-            key={viewMode}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Performance Backtest */}
+          <motion.div key={viewMode} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+            <section className="mb-8"><PerformanceBacktest /></section>
             <section className="mb-8">
-              <PerformanceBacktest />
+              <MarketGauge riskIndex={marketRisk} summary={data.fundamental.summary} verdict={marketVerdict} />
             </section>
 
-            {/* Market Overview */}
-            <section className="mb-8">
-              <MarketGauge
-                riskIndex={marketRisk}
-                summary={data.fundamental.summary}
-                verdict={marketVerdict}
-              />
-            </section>
-
-            {/* AI-Driven Analytics */}
             {(viewMode === "combined" || viewMode === "fundamental" || viewMode === "technical") && (
               <CategorySection type="ai-driven">
                 {viewMode === "fundamental" && (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {COINS.map((coin) => (
-                      <CoinCard
-                        key={coin}
-                        coin={coin}
-                        data={data.fundamental.coins[coin]}
-                        mode="fundamental"
-                      />
+                      <CoinCard key={coin} coin={coin} data={data.fundamental.coins[coin]} mode="fundamental" />
                     ))}
                   </div>
                 )}
 
                 {viewMode === "technical" && <TechnicalPanel data={data.technical} />}
 
-                {viewMode === "combined" && (
-                  <AggregatorPanel aggregatedData={aggregatedData} weights={weights} />
-                )}
+                {viewMode === "combined" && <AggregatorPanel aggregatedData={aggregatedData} weights={profile?.weights ?? { fundamental: 0.6, technical: 0.4 }} />}
               </CategorySection>
             )}
 
-            {/* User-Adaptive Analytics */}
             {(viewMode === "user-technical" || viewMode === "news-analysis" || viewMode === "signal-aggregator") && (
               <CategorySection type="user-adaptive">
                 {viewMode === "user-technical" && <TechnicalAnalysisZone />}
                 {viewMode === "news-analysis" && <NewsAnalysisSection />}
-                {viewMode === "signal-aggregator" && (
-                  <EnhancedAggregatorPanel aggregatedData={aggregatedData} weights={weights} />
-                )}
+                {viewMode === "signal-aggregator" && <EnhancedAggregatorPanel aggregatedData={aggregatedData} weights={profile?.weights ?? { fundamental: 0.6, technical: 0.4 }} />}
               </CategorySection>
             )}
 
-            {/* Reports */}
-            {viewMode === "reports" && (
-              <section>
-                <ReportsTab data={data} />
-              </section>
-            )}
+            {viewMode === "reports" && <section><ReportsTab data={data} /></section>}
           </motion.div>
         </AnimatePresence>
       </main>
