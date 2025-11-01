@@ -1,0 +1,405 @@
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sparkles, TrendingUp, Brain, Zap, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useUserProfile, ExperienceLevel, Personality } from "@/hooks/useUserProfile";
+import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+
+/**
+ * Fixed Welcome.tsx
+ * - Wraps Supabase builders in Promises to satisfy TS
+ * - Uses timeouts for network calls
+ * - Properly types skill_level union
+ * - Prevents double submissions and stale state updates
+ * - Keeps UI/behavior intact
+ */
+
+const steps = [
+  {
+    id: "welcome",
+    title: "Welcome to the Future of Trading",
+    subtitle: "AI-powered insights tailored to your style",
+  },
+  {
+    id: "profile",
+    title: "Let's personalize your experience",
+    subtitle: "We'll adapt everything to match your needs",
+  },
+];
+
+type FormData = {
+  preferredName: string;
+  age: string;
+  gender: string;
+  experienceLevel: ExperienceLevel;
+  personality: Personality;
+};
+
+export default function Welcome() {
+  const navigate = useNavigate();
+  const { updateProfile, completeOnboarding } = useUserProfile();
+  const { toast } = useToast();
+
+  const mountedRef = useRef(true);
+  const isSubmittingRef = useRef(false);
+
+  const [currentStep, setCurrentStep] = useState<number>(0);
+  const [formData, setFormData] = useState<FormData>({
+    preferredName: "",
+    age: "",
+    gender: "",
+    experienceLevel: "beginner",
+    personality: "casual",
+  });
+  const [errors, setErrors] = useState({ preferredName: "", age: "" });
+
+  // helper: convert Supabase builder (PostgrestFilterBuilder / PostgrestBuilder) to a real Promise
+  const exec = <T,>(builderLike: any): Promise<T> =>
+    new Promise((resolve, reject) => {
+      try {
+        // many supabase builders return `.then`-able objects; use that if available
+        if (typeof builderLike?.then === "function") {
+          builderLike.then((r: any) => resolve(r)).catch((e: any) => reject(e));
+        } else {
+          // fallback: resolve directly (for getSession/getUser results etc)
+          resolve(builderLike as T);
+        }
+      } catch (err) {
+        reject(err);
+      }
+    });
+
+  const withTimeout = async <T,>(p: Promise<T>, ms = 2000): Promise<T | { timeout: true }> => {
+    return await Promise.race<T | { timeout: true }>([
+      p,
+      new Promise<{ timeout: true }>((res) => setTimeout(() => res({ timeout: true }), ms)),
+    ]);
+  };
+
+  useEffect(() => {
+    mountedRef.current = true;
+
+    const checkSessionAndProfile = async () => {
+      try {
+        // get session (supabase.auth.getSession returns a real Promise)
+        const sessionResult: any = await withTimeout(supabase.auth.getSession(), 2000);
+        if ((sessionResult as any).timeout) {
+          console.warn("[Welcome] session check timed out; leaving on Welcome");
+          return;
+        }
+        const { data: { session } } = sessionResult as any;
+        if (!session) {
+          navigate("/auth");
+          return;
+        }
+
+        // fetch profile: wrap builder into promise with exec()
+        const profilePromise = exec<any>(
+          supabase.from("user_profiles").select("id").eq("user_id", session.user.id).maybeSingle()
+        );
+        const profileResult: any = await withTimeout(profilePromise, 2000);
+        if ((profileResult as any).timeout) {
+          console.warn("[Welcome] profile fetch timed out; assuming no profile");
+          return;
+        }
+
+        if (profileResult?.data) {
+          // profile exists -> redirect to dashboard
+          if (mountedRef.current) navigate("/dashboard");
+        }
+      } catch (err) {
+        console.error("[Welcome] error checking session/profile:", err);
+        if (mountedRef.current) navigate("/auth");
+      }
+    };
+
+    checkSessionAndProfile();
+
+    return () => {
+      mountedRef.current = false;
+    };
+  }, [navigate]);
+
+  const handleNext = async () => {
+    if (currentStep === 0) {
+      setCurrentStep(1);
+      return;
+    }
+
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+
+    // validate
+    const newErrors = { preferredName: "", age: "" };
+    if (!formData.preferredName.trim()) newErrors.preferredName = "Please enter your name";
+    const ageNum = parseInt(formData.age || "0", 10);
+    if (!formData.age || Number.isNaN(ageNum) || ageNum < 1 || ageNum > 120)
+      newErrors.age = "Please enter a valid age";
+
+    if (newErrors.preferredName || newErrors.age) {
+      setErrors(newErrors);
+      isSubmittingRef.current = false;
+      return;
+    }
+
+    // optimistic local update
+    updateProfile({
+      preferredName: formData.preferredName.trim(),
+      age: ageNum,
+      gender: formData.gender || null,
+      experienceLevel: formData.experienceLevel,
+      personality: formData.personality,
+    });
+
+    setErrors({ preferredName: "", age: "" });
+
+    try {
+      // get user
+      const maybeUser: any = await withTimeout(exec<any>(supabase.auth.getUser()), 2000);
+      if ((maybeUser as any).timeout) {
+        toast({
+          title: "Backend slow or offline",
+          description: "Saved locally — continuing to dashboard.",
+        });
+        completeOnboarding();
+        if (mountedRef.current) navigate("/dashboard");
+        return;
+      }
+
+      const { data: { user }, error: userErr } = maybeUser as any;
+      if (userErr || !user) {
+        toast({
+          title: "Authentication issue",
+          description: "Please sign in again.",
+          variant: "destructive",
+        });
+        if (mountedRef.current) navigate("/auth");
+        return;
+      }
+
+      // compute generation & skill
+      const currentYear = new Date().getFullYear();
+      const birthYear = currentYear - ageNum;
+      const generation =
+        birthYear >= 2010 ? "genAlpha" : birthYear >= 1997 ? "genZ" : birthYear >= 1981 ? "genY" : "genX";
+
+      const skill_level: "beginner" | "intermediate" | "advanced" | "expert" =
+        formData.experienceLevel === "intermediate"
+          ? "intermediate"
+          : formData.experienceLevel === "advanced"
+          ? "advanced"
+          : "beginner";
+
+      const skill_score = formData.experienceLevel === "intermediate" ? 5 : formData.experienceLevel === "advanced" ? 8 : 2;
+
+      const profilePayload = {
+        user_id: user.id,
+        preferred_name: formData.preferredName.trim(),
+        age: ageNum,
+        generation,
+        skill_level,
+        skill_score,
+        personality: formData.personality,
+      };
+
+      const prefsPayload = {
+        user_id: user.id,
+        chart_indicators: [],
+        layout_config: {},
+        favorite_sections: [],
+      };
+
+      // upsert profile (wrap builder in exec)
+      const profileRes: any = await withTimeout(exec<any>(supabase.from("user_profiles").upsert(profilePayload)), 2000);
+      if ((profileRes as any).timeout) {
+        toast({ title: "Profile save timed out", description: "Continuing locally." });
+        completeOnboarding();
+        if (mountedRef.current) navigate("/dashboard");
+        return;
+      }
+      if (profileRes?.error) {
+        console.error("[Welcome] profile upsert error:", profileRes.error);
+        toast({ title: "Warning", description: "Couldn't save profile to server. Continuing.", variant: "destructive" });
+        completeOnboarding();
+        if (mountedRef.current) navigate("/dashboard");
+        return;
+      }
+
+      // upsert prefs (non-blocking)
+      const prefsRes: any = await withTimeout(exec<any>(supabase.from("dashboard_preferences").upsert(prefsPayload)), 2000);
+      if ((prefsRes as any).timeout || prefsRes?.error) {
+        console.warn("[Welcome] prefs upsert failed or timed out:", prefsRes?.error);
+      }
+
+      toast({ title: "Profile Created! 🎉", description: "Your adaptive dashboard is ready!" });
+      completeOnboarding();
+      if (mountedRef.current) setTimeout(() => navigate("/dashboard"), 300);
+    } catch (err) {
+      console.error("[Welcome] unexpected error during handleNext:", err);
+      toast({ title: "Error", description: "Failed to save profile. Continuing to dashboard...", variant: "destructive" });
+      completeOnboarding();
+      if (mountedRef.current) setTimeout(() => navigate("/dashboard"), 300);
+    } finally {
+      isSubmittingRef.current = false;
+    }
+  };
+
+  const canProceed = currentStep === 0 || (formData.preferredName.trim().length > 0 && formData.age.trim().length > 0);
+
+  return (
+    <div className="fixed inset-0 z-50 bg-background flex items-center justify-center p-4 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute inset-0 opacity-20"
+          style={{ background: "radial-gradient(circle at 50% 50%, hsl(186 100% 44% / 0.3), transparent 70%)" }}
+          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-primary/30 rounded-full"
+            style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
+            animate={{ y: [0, -30, 0], opacity: [0, 1, 0] }}
+            transition={{ duration: 3 + Math.random() * 2, repeat: Infinity, delay: Math.random() * 2 }}
+          />
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentStep}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
+          className="relative z-10 w-full max-w-2xl"
+        >
+          <Card className="glass-card p-8 md:p-12 relative overflow-hidden">
+            <motion.div
+              className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-primary/10 blur-3xl"
+              animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+              transition={{ duration: 4, repeat: Infinity }}
+            />
+
+            {currentStep === 0 ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center space-y-6">
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }} className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/20 mb-4">
+                  <Brain className="w-10 h-10 text-primary" />
+                </motion.div>
+
+                <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="text-4xl md:text-5xl font-bold gradient-text">
+                  {steps[0].title}
+                </motion.h1>
+
+                <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="text-xl text-muted-foreground max-w-md mx-auto">
+                  {steps[0].subtitle}
+                </motion.p>
+
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8">
+                  {[{ icon: Brain, label: "AI-Driven Analytics", color: "primary" }, { icon: TrendingUp, label: "Real-time Signals", color: "positive" }, { icon: Zap, label: "Adaptive Experience", color: "secondary" }].map((feature, i) => (
+                    <motion.div key={i} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 + i * 0.1 }} className="glass-card p-4 text-center hover-lift">
+                      <feature.icon className={`w-8 h-8 mx-auto mb-2 text-${feature.color}`} />
+                      <p className="text-sm font-medium">{feature.label}</p>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </motion.div>
+            ) : (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+                <div className="text-center mb-8">
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1, rotate: 360 }} transition={{ type: "spring", delay: 0.2 }} className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary/20 mb-4">
+                    <Sparkles className="w-8 h-8 text-secondary" />
+                  </motion.div>
+                  <h2 className="text-3xl font-bold mb-2">{steps[1].title}</h2>
+                  <p className="text-muted-foreground">{steps[1].subtitle}</p>
+                </div>
+
+                <div className="space-y-6">
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
+                    <Label htmlFor="name" className="text-base mb-2 block">What should we call you? ✨</Label>
+                    <Input id="name" placeholder="Your preferred name" value={formData.preferredName} onChange={(e) => { setFormData({ ...formData, preferredName: e.target.value }); setErrors({ ...errors, preferredName: "" }); }} className={`glass-card text-lg ${errors.preferredName ? "border-destructive" : ""}`} />
+                    {errors.preferredName && <p className="text-sm text-destructive mt-1">{errors.preferredName}</p>}
+                  </motion.div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}>
+                      <Label htmlFor="age" className="text-base mb-2 block">Your age</Label>
+                      <Input id="age" type="number" placeholder="25" value={formData.age} onChange={(e) => { setFormData({ ...formData, age: e.target.value }); setErrors({ ...errors, age: "" }); }} className={`glass-card ${errors.age ? "border-destructive" : ""}`} />
+                      {errors.age && <p className="text-sm text-destructive mt-1">{errors.age}</p>}
+                    </motion.div>
+
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
+                      <Label htmlFor="gender" className="text-base mb-2 block">Gender (optional)</Label>
+                      <Select value={formData.gender} onValueChange={(value) => setFormData({ ...formData, gender: value })}>
+                        <SelectTrigger className="glass-card"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </motion.div>
+                  </div>
+
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+                    <Label htmlFor="experience" className="text-base mb-2 block">Trading experience</Label>
+                    <Select value={formData.experienceLevel} onValueChange={(value: ExperienceLevel) => setFormData({ ...formData, experienceLevel: value })}>
+                      <SelectTrigger className="glass-card"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="beginner">🌱 Just starting out</SelectItem>
+                        <SelectItem value="intermediate">📈 Some experience</SelectItem>
+                        <SelectItem value="advanced">🚀 Experienced trader</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </motion.div>
+
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
+                    <Label htmlFor="personality" className="text-base mb-2 block">Your interaction style</Label>
+                    <Select value={formData.personality || "casual"} onValueChange={(value: Personality) => setFormData({ ...formData, personality: value })}>
+                      <SelectTrigger className="glass-card"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="analyst">🔍 Analytical - Dense data & details</SelectItem>
+                        <SelectItem value="casual">✨ Casual - Simple & clear</SelectItem>
+                        <SelectItem value="expert">⚡ Expert - Raw control & advanced</SelectItem>
+                        <SelectItem value="learner">📚 Learner - Guided & educational</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="flex justify-center mt-8">
+              <Button size="lg" onClick={handleNext} disabled={!canProceed} className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 neon-glow group">
+                {currentStep === 0 ? "Get Started" : "Launch Dashboard"}
+                <motion.div className="ml-2" animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                  <ArrowRight className="w-5 h-5" />
+                </motion.div>
+              </Button>
+            </motion.div>
+
+            <div className="flex justify-center gap-2 mt-6">
+              {steps.map((_, i) => (
+                <motion.div key={i} className={`h-1 rounded-full ${i === currentStep ? "w-8 bg-primary" : "w-2 bg-muted"}`} animate={{ scale: i === currentStep ? 1 : 0.8 }} />
+              ))}
+            </div>
+          </Card>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
