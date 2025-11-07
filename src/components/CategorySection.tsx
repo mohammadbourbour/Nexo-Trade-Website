@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
-import { Brain, User, Sparkles, LucideIcon } from "lucide-react";
+import { Brain, User, Sparkles } from "lucide-react";
+import type { ComponentType } from "react";
 import { Card } from "@/components/ui/card";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { useTranslation } from "react-i18next";
 
 interface CategorySectionProps {
   type: "ai-driven" | "user-adaptive";
@@ -9,29 +11,40 @@ interface CategorySectionProps {
 }
 
 export function CategorySection({ type, children }: CategorySectionProps) {
+  const { t } = useTranslation();
   const { userProfile } = useUserProfile();
   const isGenZ = userProfile.generation === "genZ";
 
-  const config = {
+  const config: Record<
+    "ai-driven" | "user-adaptive",
+    {
+      icon: ComponentType<any>;
+      titleKey: string;
+      subtitleKey: string;
+      gradient: string;
+      iconColor: string;
+      borderColor: string;
+    }
+  > = {
     "ai-driven": {
       icon: Brain,
-      title: "AI-Driven Analytics",
-      subtitle: "Fully analyzed by artificial intelligence",
+      titleKey: "category.ai.title",
+      subtitleKey: "category.ai.subtitle",
       gradient: "from-primary/20 via-secondary/10 to-transparent",
       iconColor: "text-primary",
       borderColor: "border-primary/30",
     },
     "user-adaptive": {
       icon: User,
-      title: "User-Adaptive Analytics",
-      subtitle: "Personalized based on your preferences and inputs",
+      titleKey: "category.user.title",
+      subtitleKey: "category.user.subtitle",
       gradient: "from-secondary/20 via-accent/10 to-transparent",
       iconColor: "text-secondary",
       borderColor: "border-secondary/30",
     },
   };
 
-  const { icon: Icon, title, subtitle, gradient, iconColor, borderColor } = config[type];
+  const { icon: Icon, titleKey, subtitleKey, gradient, iconColor, borderColor } = config[type];
 
   return (
     <motion.div
@@ -91,7 +104,7 @@ export function CategorySection({ type, children }: CategorySectionProps) {
             </motion.div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold flex items-center gap-2">
-                {title}
+                {t(titleKey)}
                 {type === "ai-driven" && (
                   <motion.div
                     animate={{ rotate: 360 }}
@@ -101,7 +114,7 @@ export function CategorySection({ type, children }: CategorySectionProps) {
                   </motion.div>
                 )}
               </h2>
-              <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+              <p className="text-sm text-muted-foreground mt-1">{t(subtitleKey)}</p>
             </div>
           </div>
 

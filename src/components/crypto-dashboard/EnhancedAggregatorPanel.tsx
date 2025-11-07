@@ -5,6 +5,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { BarChart, Bar, LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from "recharts";
 import { TrendingUp, TrendingDown, Minus, Activity, Newspaper, LineChart as LineChartIcon } from "lucide-react";
 import type { AggregatedCoinData } from "@/lib/aggregator";
+import { useTranslation } from "react-i18next";
 
 interface EnhancedAggregatorPanelProps {
   aggregatedData: Record<string, AggregatedCoinData>;
@@ -19,6 +20,7 @@ export function EnhancedAggregatorPanel({
   aggregatedData,
   weights,
 }: EnhancedAggregatorPanelProps) {
+  const { t, i18n } = useTranslation();
   const [signalMode, setSignalMode] = useState<SignalMode>("combined");
 
   const getDecisionColor = (decision: string) => {
@@ -33,6 +35,10 @@ export function EnhancedAggregatorPanel({
     return <Minus className="w-5 h-5" />;
   };
 
+  // helper to format percents according to current locale
+  const fmtPercent = (n: number, digits = 0) =>
+    (n * 100).toLocaleString(i18n.language, { maximumFractionDigits: digits });
+
   // Calculate mode-specific scores
   const getModeScore = (coin: string) => {
     const data = aggregatedData[coin];
@@ -40,11 +46,11 @@ export function EnhancedAggregatorPanel({
 
     switch (signalMode) {
       case "technical":
-        return data.technical_contribution;
+        return data.technical_contribution ?? 0;
       case "news":
-        return data.fundamental_contribution;
+        return data.fundamental_contribution ?? 0;
       default:
-        return data.final_score;
+        return data.final_score ?? 0;
     }
   };
 
@@ -63,13 +69,19 @@ export function EnhancedAggregatorPanel({
   const averageScore = scoreData.reduce((sum, item) => sum + item.score, 0) / COINS.length;
   const overallDecision = averageScore >= 0.65 ? "BUY" : averageScore <= 0.35 ? "SELL" : "HOLD";
 
+  const mapDecisionLabel = (decision: string) => {
+    if (decision === "BUY") return t("signals.buy");
+    if (decision === "SELL") return t("signals.sell");
+    return t("signals.hold");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Enhanced Signal Aggregator</h2>
+          <h2 className="text-2xl font-bold">{t("aggregator.enhancedTitle")}</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Combining technical analysis and market sentiment
+            {t("aggregator.enhancedSubtitle")}
           </p>
         </div>
         
@@ -81,15 +93,15 @@ export function EnhancedAggregatorPanel({
         >
           <ToggleGroupItem value="technical" className="gap-2">
             <LineChartIcon className="w-4 h-4" />
-            Technical
+            {t("aggregator.mode.technical")}
           </ToggleGroupItem>
           <ToggleGroupItem value="news" className="gap-2">
             <Newspaper className="w-4 h-4" />
-            News
+            {t("aggregator.mode.news")}
           </ToggleGroupItem>
           <ToggleGroupItem value="combined" className="gap-2">
             <Activity className="w-4 h-4" />
-            Combined
+            {t("aggregator.mode.combined")}
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
@@ -98,11 +110,11 @@ export function EnhancedAggregatorPanel({
       <Card className="glass-card p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold mb-2">Overall Market Signal</h3>
+            <h3 className="text-lg font-semibold mb-2">{t("aggregator.overallTitle")}</h3>
             <p className="text-sm text-muted-foreground">
-              {signalMode === "combined" && "Based on technical + news analysis"}
-              {signalMode === "technical" && "Based on technical indicators only"}
-              {signalMode === "news" && "Based on news sentiment only"}
+              {signalMode === "combined" && t("aggregator.overallDesc.combined")}
+              {signalMode === "technical" && t("aggregator.overallDesc.technical")}
+              {signalMode === "news" && t("aggregator.overallDesc.news")}
             </p>
           </div>
           <div className="text-center">
@@ -118,11 +130,11 @@ export function EnhancedAggregatorPanel({
                     : "border-neutral text-neutral"
                 }`}
               >
-                {overallDecision}
+                {mapDecisionLabel(overallDecision)}
               </Badge>
             </div>
             <div className="text-sm text-muted-foreground">
-              Confidence: {(averageScore * 100).toFixed(0)}%
+              {t("aggregator.confidenceLabel", { percent: fmtPercent(averageScore) })}
             </div>
           </div>
         </div>
@@ -131,9 +143,9 @@ export function EnhancedAggregatorPanel({
       {/* Signal Comparison Chart */}
       <Card className="glass-card p-6">
         <h3 className="text-lg font-semibold mb-4">
-          {signalMode === "combined" && "Combined Signal Strength"}
-          {signalMode === "technical" && "Technical Signal Strength"}
-          {signalMode === "news" && "News Sentiment Strength"}
+          {signalMode === "combined" && t("aggregator.titles.combined")}
+          {signalMode === "technical" && t("aggregator.titles.technical")}
+          {signalMode === "news" && t("aggregator.titles.news")}
         </h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -173,7 +185,12 @@ export function EnhancedAggregatorPanel({
           const modeScore = getModeScore(coin);
           const modeDecision = getModeDecision(coin);
           const decisionColor = getDecisionColor(modeDecision);
-          const chartData = coinData.history.map((value, index) => ({ index, value }));
+          const chartData = (coinData.history || []).map((value, index) => ({ index, value }));
+
+          // safe contributions (avoid division by zero)
+          const totalForContrib = coinData.final_score && coinData.final_score > 0 ? coinData.final_score : 1;
+          const fundamentalPct = (coinData.fundamental_contribution / totalForContrib) || 0;
+          const technicalPct = (coinData.technical_contribution / totalForContrib) || 0;
 
           return (
             <Card
@@ -201,16 +218,16 @@ export function EnhancedAggregatorPanel({
                     }`}
                   >
                     {getSignalIcon(modeDecision)}
-                    {modeDecision}
+                    {mapDecisionLabel(modeDecision)}
                   </Badge>
                 </div>
 
                 {/* Score */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-muted-foreground">Signal Strength</span>
+                    <span className="text-sm text-muted-foreground">{t("aggregator.signalStrength")}</span>
                     <span className="text-xl font-bold">
-                      {(modeScore * 100).toFixed(0)}%
+                      {fmtPercent(modeScore)}%
                     </span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -231,15 +248,15 @@ export function EnhancedAggregatorPanel({
                 {signalMode === "combined" && (
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-muted-foreground">Confidence</span>
+                      <span className="text-sm text-muted-foreground">{t("aggregator.confidence")}</span>
                       <span className="text-lg font-semibold">
-                        {(coinData.final_confidence * 100).toFixed(0)}%
+                        {fmtPercent(coinData.final_confidence)}%
                       </span>
                     </div>
                     <div className="h-2 bg-muted rounded-full overflow-hidden">
                       <div
                         className="h-full bg-primary transition-all"
-                        style={{ width: `${coinData.final_confidence * 100}%` }}
+                        style={{ width: `${(coinData.final_confidence || 0) * 100}%` }}
                       />
                     </div>
                   </div>
@@ -248,31 +265,31 @@ export function EnhancedAggregatorPanel({
                 {/* Signal Source Breakdown (Combined mode only) */}
                 {signalMode === "combined" && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Signal Sources</p>
+                    <p className="text-sm text-muted-foreground mb-2">{t("aggregator.signalSources")}</p>
                     <div className="flex h-3 rounded-full overflow-hidden">
                       <div
                         className="bg-primary"
                         style={{
-                          width: `${(coinData.fundamental_contribution / coinData.final_score) * 100}%`,
+                          width: `${fundamentalPct * 100}%`,
                         }}
-                        title={`News: ${((coinData.fundamental_contribution / coinData.final_score) * 100).toFixed(0)}%`}
+                        title={`${t("aggregator.mode.news")}: ${((fundamentalPct) * 100).toFixed(0)}%`}
                       />
                       <div
                         className="bg-secondary"
                         style={{
-                          width: `${(coinData.technical_contribution / coinData.final_score) * 100}%`,
+                          width: `${technicalPct * 100}%`,
                         }}
-                        title={`Technical: ${((coinData.technical_contribution / coinData.final_score) * 100).toFixed(0)}%`}
+                        title={`${t("aggregator.mode.technical")}: ${((technicalPct) * 100).toFixed(0)}%`}
                       />
                     </div>
                     <div className="flex items-center justify-between mt-2 text-xs">
                       <span className="flex items-center gap-1">
                         <div className="w-2 h-2 rounded-full bg-primary" />
-                        News
+                        {t("aggregator.mode.news")}
                       </span>
                       <span className="flex items-center gap-1">
                         <div className="w-2 h-2 rounded-full bg-secondary" />
-                        Technical
+                        {t("aggregator.mode.technical")}
                       </span>
                     </div>
                   </div>

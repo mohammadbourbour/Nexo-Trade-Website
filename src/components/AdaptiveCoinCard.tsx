@@ -1,3 +1,4 @@
+// src/components/AdaptiveCoinCard.tsx
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useAdaptiveContent } from "@/hooks/useAdaptiveContent";
 import { useBehaviorTracking } from "@/hooks/useBehaviorTracking";
+import { useTranslation } from "react-i18next";
 import type { CoinData } from "./CryptoSentimentProDashboard";
 
 interface AdaptiveCoinCardProps {
@@ -14,10 +16,17 @@ interface AdaptiveCoinCardProps {
 }
 
 export function AdaptiveCoinCard({ coin, data, mode }: AdaptiveCoinCardProps) {
+  const { t } = useTranslation();
   const { complexity, simplifyText, getTextComplexity, getAnimationIntensity } = useAdaptiveContent();
   const { trackClick, trackHover } = useBehaviorTracking();
-  const textConfig = getTextComplexity;
-  const animationIntensity = getAnimationIntensity;
+
+  // امن‌سازی فراخوانی: یا مقدار برگشتی رو صدا می‌زنیم (اگه تابع باشه)
+  // یا از خودشِ مقدار استفاده می‌کنیم. از as any برای حل مشکل تایپ استفاده شده.
+  const textConfig: any =
+    typeof getTextComplexity === "function" ? (getTextComplexity as any)() : (getTextComplexity as any);
+
+  const animationIntensity: any =
+    typeof getAnimationIntensity === "function" ? (getAnimationIntensity as any)() : (getAnimationIntensity as any);
 
   const getSentimentColor = () => {
     if (data.sentiment === "bullish") return "text-positive";
@@ -40,57 +49,47 @@ export function AdaptiveCoinCard({ coin, data, mode }: AdaptiveCoinCardProps) {
   const getAnimationConfig = () => {
     switch (animationIntensity) {
       case 'high':
-        return {
-          hover: { scale: 1.08, y: -8 },
-          tap: { scale: 0.95 },
-        };
+        return { hover: { scale: 1.08, y: -8 }, tap: { scale: 0.95 } };
       case 'medium':
-        return {
-          hover: { scale: 1.05, y: -4 },
-          tap: { scale: 0.98 },
-        };
+        return { hover: { scale: 1.05, y: -4 }, tap: { scale: 0.98 } };
       case 'low':
-        return {
-          hover: { scale: 1.02, y: -2 },
-          tap: { scale: 0.99 },
-        };
+        return { hover: { scale: 1.02, y: -2 }, tap: { scale: 0.99 } };
       case 'minimal':
-        return {
-          hover: { scale: 1.01 },
-          tap: { scale: 1 },
-        };
+        return { hover: { scale: 1.01 }, tap: { scale: 1 } };
       default:
-        return {
-          hover: { scale: 1.05, y: -4 },
-          tap: { scale: 0.98 },
-        };
+        return { hover: { scale: 1.05, y: -4 }, tap: { scale: 0.98 } };
     }
   };
 
-  const displayReason = simplifyText(data.reason, textConfig.wordLimit || undefined);
+  const displayReason = simplifyText(data.reason, textConfig?.wordLimit || undefined);
   const showDetailedInfo = complexity !== 'simple';
   const showExtraMetrics = complexity === 'expert' || complexity === 'detailed';
+
+  const sentimentLabel = t(`market.verdict.${data.sentiment}`, { defaultValue: data.sentiment });
 
   return (
     <motion.div
       whileHover={getAnimationConfig().hover}
       whileTap={getAnimationConfig().tap}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      onClick={() => trackClick('coin-card', { coin, mode })}
-      onMouseEnter={() => trackHover('coin-card', coin)}
+      onClick={() => trackClick?.('coin-card', { coin, mode })}
+      onMouseEnter={() => trackHover?.('coin-card', coin)}
+      role="article"
+      aria-label={`${coin} ${sentimentLabel}`}
     >
-      <Card className={`glass-card hover-lift ${getSentimentGlow()} cursor-pointer`}>
+      <Card className={`glass-card hover-lift ${getSentimentGlow()} cursor-pointer`} tabIndex={0}>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold gradient-text flex items-center gap-2">
-              {coin}
+              <span>{coin}</span>
               {getSentimentIcon()}
             </CardTitle>
             <Badge
               variant="outline"
               className={`${getSentimentColor()} border-current uppercase font-bold`}
+              aria-label={t('adaptiveCoin.sentimentBadgeAria', { sentiment: sentimentLabel })}
             >
-              {data.sentiment}
+              {sentimentLabel}
             </Badge>
           </div>
         </CardHeader>
@@ -100,32 +99,32 @@ export function AdaptiveCoinCard({ coin, data, mode }: AdaptiveCoinCardProps) {
           <div>
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium">
-                {textConfig.useTechnicalTerms ? 'Sentiment Score' : 'Score'}
+                {textConfig?.useTechnicalTerms ? t('adaptiveCoin.sentimentScore') : t('adaptiveCoin.score')}
               </span>
               <span className={`text-lg font-bold ${getSentimentColor()}`}>
                 {(data.score * 100).toFixed(0)}%
               </span>
             </div>
-            <Progress value={data.score * 100} className="h-2" />
+            <Progress value={data.score * 100} className="h-2" aria-valuenow={Math.round(data.score * 100)} />
           </div>
 
           {/* Confidence (shown for intermediate+) */}
           {showDetailedInfo && (
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium">Confidence</span>
+                <span className="text-sm font-medium">{t('adaptiveCoin.confidence')}</span>
                 <span className="text-sm font-semibold">
                   {(data.confidence * 100).toFixed(0)}%
                 </span>
               </div>
-              <Progress value={data.confidence * 100} className="h-2" />
+              <Progress value={data.confidence * 100} className="h-2" aria-valuenow={Math.round(data.confidence * 100)} />
             </div>
           )}
 
           {/* Reason */}
           <div>
             <p className="text-sm font-medium mb-1">
-              {textConfig.useTechnicalTerms ? 'Analysis' : 'Why?'}
+              {textConfig?.useTechnicalTerms ? t('adaptiveCoin.analysis') : t('adaptiveCoin.why')}
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {displayReason}
@@ -135,7 +134,7 @@ export function AdaptiveCoinCard({ coin, data, mode }: AdaptiveCoinCardProps) {
           {/* Evidence count (expert only) */}
           {showExtraMetrics && (
             <div className="flex justify-between items-center pt-2 border-t border-border/50">
-              <span className="text-xs text-muted-foreground">Evidence Sources</span>
+              <span className="text-xs text-muted-foreground">{t('adaptiveCoin.evidenceSources')}</span>
               <span className="text-xs font-semibold">{data.evidence_count}</span>
             </div>
           )}
@@ -144,7 +143,7 @@ export function AdaptiveCoinCard({ coin, data, mode }: AdaptiveCoinCardProps) {
           {complexity === 'simple' && (
             <div className="pt-2 border-t border-primary/20">
               <p className="text-xs text-muted-foreground italic">
-                💡 {data.sentiment === 'bullish' ? 'Good signs!' : data.sentiment === 'bearish' ? 'Be careful!' : 'Mixed signals'}
+                {`💡 ${data.sentiment === 'bullish' ? t('adaptiveCoin.hintGood') : data.sentiment === 'bearish' ? t('adaptiveCoin.hintCareful') : t('adaptiveCoin.hintMixed')}`}
               </p>
             </div>
           )}

@@ -1,11 +1,13 @@
+// src/components/PerformanceBacktest.tsx
 import { motion } from "framer-motion";
 import { TrendingUp, Award, DollarSign, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 
 export const PerformanceBacktest = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
+  // NOTE: values here are example/static metrics — keep as-is or plug real numbers
   const metrics = [
     {
       icon: Award,
@@ -37,8 +39,11 @@ export const PerformanceBacktest = () => {
     }
   ];
 
+  // direction: respect RTL / LTR
+  const dir = i18n.dir();
+
   return (
-    <Card className="glass-card border-primary/20">
+    <Card className="glass-card border-primary/20" dir={dir}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary">
           <TrendingUp className="w-5 h-5" />

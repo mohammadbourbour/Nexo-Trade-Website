@@ -1,3 +1,4 @@
+// src/components/CoinCard.tsx
 import { useState } from "react";
 import { ExternalLink, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import type { CoinData } from "../CryptoSentimentProDashboard";
+import { useTranslation } from "react-i18next";
 
 // Import coin logos
 import btcLogo from "@/assets/coins/btc.png";
@@ -44,24 +46,35 @@ const COIN_LOGOS: Record<string, string> = {
 
 export function CoinCard({ coin, data, mode }: CoinCardProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+
+  const sentimentKey = (data.sentiment || "neutral").toString().toLowerCase();
 
   const getSentimentColor = () => {
-    if (data.sentiment === "Positive") return "positive";
-    if (data.sentiment === "Negative") return "negative";
+    const d = sentimentKey;
+    if (d === "positive") return "positive";
+    if (d === "negative") return "negative";
     return "neutral";
   };
 
   const getSentimentIcon = () => {
-    if (data.sentiment === "Positive") return <TrendingUp className="w-4 h-4" />;
-    if (data.sentiment === "Negative") return <TrendingDown className="w-4 h-4" />;
+    const d = sentimentKey;
+    if (d === "positive") return <TrendingUp className="w-4 h-4" />;
+    if (d === "negative") return <TrendingDown className="w-4 h-4" />;
     return <Minus className="w-4 h-4" />;
   };
 
-  const chartData = data.history.map((value, index) => ({ index, value }));
+  const chartData = (data.history || []).map((value, index) => ({ index, value }));
+
+  // helpers for formatting numbers according to active language
+  const fmtPercent = (n: number, digits = 0) =>
+    (n * 100).toLocaleString(i18n.language, { maximumFractionDigits: digits });
+
+  const coinFullName = t(`coin.names.${coin}`, coin);
 
   return (
     <>
-      <Card 
+      <Card
         className={`glass-card p-6 hover:scale-[1.02] transition-all duration-300 group cursor-pointer ${
           getSentimentColor() === "positive"
             ? "hover:border-positive hover:shadow-[0_0_20px_hsl(var(--positive)/0.3)]"
@@ -79,21 +92,15 @@ export function CoinCard({ coin, data, mode }: CoinCardProps) {
                 border: `2px solid ${COIN_COLORS[coin]}60`,
               }}
             >
-              <img src={COIN_LOGOS[coin]} alt={`${coin} logo`} className="w-full h-full object-contain" />
+              <img
+                src={COIN_LOGOS[coin]}
+                alt={t("coin.logoAlt", { coin: coinFullName })}
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <h3 className="text-lg font-bold">{coin}</h3>
-              <p className="text-xs text-muted-foreground">
-                {coin === "BTC"
-                  ? "Bitcoin"
-                  : coin === "ETH"
-                  ? "Ethereum"
-                  : coin === "XRP"
-                  ? "Ripple"
-                  : coin === "SOL"
-                  ? "Solana"
-                  : "Dogecoin"}
-              </p>
+              <p className="text-xs text-muted-foreground">{coinFullName}</p>
             </div>
           </div>
 
@@ -108,7 +115,7 @@ export function CoinCard({ coin, data, mode }: CoinCardProps) {
             }`}
           >
             {getSentimentIcon()}
-            {data.sentiment}
+            {t(`coin.sentiment.${sentimentKey}`)}
           </Badge>
         </div>
 
@@ -116,8 +123,8 @@ export function CoinCard({ coin, data, mode }: CoinCardProps) {
           {/* Score */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-muted-foreground">Score</span>
-              <span className="text-2xl font-bold">{data.score.toFixed(2)}</span>
+              <span className="text-sm text-muted-foreground">{t("aggregator.finalScoreShort", "Score")}</span>
+              <span className="text-2xl font-bold">{Number(data.score).toFixed(2)}</span>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
               <div
@@ -128,7 +135,7 @@ export function CoinCard({ coin, data, mode }: CoinCardProps) {
                     ? "bg-negative"
                     : "bg-neutral"
                 }`}
-                style={{ width: `${data.score * 100}%` }}
+                style={{ width: `${(data.score || 0) * 100}%` }}
               />
             </div>
           </div>
@@ -136,13 +143,13 @@ export function CoinCard({ coin, data, mode }: CoinCardProps) {
           {/* Confidence */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-muted-foreground">Confidence</span>
-              <span className="text-lg font-semibold">{(data.confidence * 100).toFixed(0)}%</span>
+              <span className="text-sm text-muted-foreground">{t("aggregator.confidence")}</span>
+              <span className="text-lg font-semibold">{fmtPercent(data.confidence, 0)}%</span>
             </div>
             <div className="relative h-2 bg-muted rounded-full overflow-hidden">
               <div
                 className="absolute inset-0 bg-primary transition-all duration-500"
-                style={{ width: `${data.confidence * 100}%` }}
+                style={{ width: `${(data.confidence || 0) * 100}%` }}
               />
             </div>
           </div>
@@ -154,13 +161,13 @@ export function CoinCard({ coin, data, mode }: CoinCardProps) {
           {data.evidence_count > 0 && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="px-2 py-1 bg-primary/10 rounded">
-                {data.evidence_count} sources
+                {t("coin.labels.evidenceSourcesCount", { count: data.evidence_count })}
               </span>
             </div>
           )}
 
           {/* Mini Sparkline */}
-          {data.history.length > 0 && (
+          {chartData.length > 0 && (
             <div className="h-16 -mx-2">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
@@ -186,7 +193,7 @@ export function CoinCard({ coin, data, mode }: CoinCardProps) {
           <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="w-full" size="sm">
-                View Details
+                {t("coin.viewDetails")}
               </Button>
             </DialogTrigger>
             <DialogContent className="glass-card max-w-2xl">
@@ -199,32 +206,32 @@ export function CoinCard({ coin, data, mode }: CoinCardProps) {
                       border: `2px solid ${COIN_COLORS[coin]}60`,
                     }}
                   >
-                    <img src={COIN_LOGOS[coin]} alt={`${coin} logo`} className="w-full h-full object-contain" />
+                    <img src={COIN_LOGOS[coin]} alt={t("coin.logoAlt", { coin: coinFullName })} className="w-full h-full object-contain" />
                   </div>
-                  {coin} Detailed Analysis
+                  {t("coin.detailsTitle", { coin })}
                 </DialogTitle>
               </DialogHeader>
 
               <div className="space-y-6 mt-4">
                 <div>
-                  <h4 className="font-semibold mb-2">Sentiment Analysis</h4>
+                  <h4 className="font-semibold mb-2">{t("coin.labels.analysis")}</h4>
                   <p className="text-muted-foreground">{data.reason}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Score</p>
-                    <p className="text-2xl font-bold">{data.score.toFixed(2)}</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t("aggregator.finalScoreShort", "Score")}</p>
+                    <p className="text-2xl font-bold">{Number(data.score).toFixed(2)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Confidence</p>
-                    <p className="text-2xl font-bold">{(data.confidence * 100).toFixed(0)}%</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t("aggregator.confidence")}</p>
+                    <p className="text-2xl font-bold">{fmtPercent(data.confidence, 0)}%</p>
                   </div>
                 </div>
 
                 {data.top_examples && data.top_examples.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-3">Top Sources</h4>
+                    <h4 className="font-semibold mb-3">{t("coin.topSources")}</h4>
                     <div className="space-y-2">
                       {data.top_examples.map((example) => (
                         <a
@@ -246,7 +253,7 @@ export function CoinCard({ coin, data, mode }: CoinCardProps) {
 
                 {data.history.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-3">Historical Trend</h4>
+                    <h4 className="font-semibold mb-3">{t("coin.historicalTrend")}</h4>
                     <div className="h-40">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={chartData}>

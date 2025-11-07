@@ -77,7 +77,14 @@ export interface DashboardData {
   technical: TechnicalData;
 }
 
-type ViewMode = "fundamental" | "technical" | "combined" | "reports" | "user-technical" | "news-analysis" | "signal-aggregator";
+type ViewMode =
+  | "fundamental"
+  | "technical"
+  | "combined"
+  | "reports"
+  | "user-technical"
+  | "news-analysis"
+  | "signal-aggregator";
 
 interface CryptoSentimentProDashboardProps {
   data?: DashboardData;
@@ -90,7 +97,7 @@ export function CryptoSentimentProDashboard({
   data: propData,
   apiEndpoint = "/api/dashboard/latest",
 }: CryptoSentimentProDashboardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { profile, addXP, addCoins } = useTraderProfile();
@@ -111,6 +118,28 @@ export function CryptoSentimentProDashboard({
 
   // prevent multiple redirects from different components (Auth + Dashboard)
   const redirectToWelcomeRef = useRef(false);
+
+  // Ensure document <html> dir/lang are in sync with i18n and translations.
+  // We prefer i18n.language but also fallback/check the translation key global.isRTL if present.
+  useEffect(() => {
+    const setDirection = () => {
+      const lang = i18n.language || (typeof window !== "undefined" && (document.documentElement.lang || "en"));
+      const isRTLFlag = (() => {
+        try {
+          // t('global.isRTL') returns string "true"/"false" in your files — keep that behavior
+          return t("global.isRTL") === "true";
+        } catch {
+          return false;
+        }
+      })();
+      const dir = lang === "fa" || isRTLFlag ? "rtl" : "ltr";
+      document.documentElement.dir = dir;
+      document.documentElement.lang = lang;
+    };
+
+    setDirection();
+    // run when language or translations change
+  }, [i18n.language, t]);
 
   // If backend is offline (profileError) we avoid redirecting to welcome to prevent flash/loop.
   useEffect(() => {
@@ -134,8 +163,8 @@ export function CryptoSentimentProDashboard({
       if (profileError) {
         console.warn("userProfile fetch error (backend might be offline):", profileError);
         toast?.({
-          title: "Backend unreachable",
-          description: "Showing cached data or mock content. Full features may be limited.",
+          title: t("dashboard.backendUnreachable.title"),
+          description: t("dashboard.backendUnreachable.description"),
           variant: "destructive",
         });
         return;
@@ -194,8 +223,8 @@ export function CryptoSentimentProDashboard({
         calculateSkillScore?.();
         if (profile?.xp > 0 && profile?.xp % 1000 === 10) {
           setAchievementData({
-            title: "Level Up!",
-            description: `You've reached ${Math.floor(profile.xp / 1000)} level!`,
+            title: t("achievement.levelUp.title"),
+            description: t("achievement.levelUp.description", { level: Math.floor(profile.xp / 1000) }),
           });
           setShowAchievement(true);
           setTimeout(() => setShowAchievement(false), 5000);
@@ -221,22 +250,22 @@ export function CryptoSentimentProDashboard({
       setData(json);
       setLastUpdate(new Date());
       localStorage.setItem("dashboard-cache", JSON.stringify(json));
-      toast?.({ title: "Data refreshed", description: "Latest market data loaded successfully" });
+      toast?.({ title: t("dashboard.dataRefreshed.title"), description: t("dashboard.dataRefreshed.description") });
     } catch (err) {
       console.error("fetchData error:", err);
       const cached = localStorage.getItem("dashboard-cache");
       if (cached) {
         setData(JSON.parse(cached));
         toast?.({
-          title: "Using cached data",
-          description: "Could not fetch live data, showing cached version",
+          title: t("dashboard.cachedData.title"),
+          description: t("dashboard.cachedData.description"),
           variant: "destructive",
         });
       } else {
         // if no cache, we keep data null so loading UI shows
         toast?.({
-          title: "Error loading data",
-          description: "Please check your connection and try again",
+          title: t("dashboard.errorLoading.title"),
+          description: t("dashboard.errorLoading.description"),
           variant: "destructive",
         });
       }
@@ -252,11 +281,13 @@ export function CryptoSentimentProDashboard({
 
   // If no data available yet, show loading (this prevents white/blank screen)
   if (!data) {
+    // root <div> below will have dir set too via effect, but ensure loading respects RTL immediately.
+    const loadingDir = i18n.language === "fa" || t("global.isRTL") === "true" ? "rtl" : "ltr";
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen" dir={loadingDir}>
         <div className="text-center space-y-4">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-muted-foreground">Loading dashboard data...</p>
+          <p className="text-muted-foreground">{t("dashboard.loading")}</p>
         </div>
       </div>
     );
@@ -264,11 +295,15 @@ export function CryptoSentimentProDashboard({
 
   const marketRisk = calculateMarketRisk(data);
   const aggregatedData = aggregateSignals(data, profile?.weights ?? { fundamental: 0.6, technical: 0.4 });
-  const avgScore = Object.values(aggregatedData).reduce((sum, coin) => sum + coin.final_score, 0) / COINS.length;
+  const avgScore =
+    Object.values(aggregatedData).reduce((sum, coin) => sum + coin.final_score, 0) / COINS.length;
   const marketVerdict = avgScore >= 0.65 ? "bullish" : avgScore <= 0.35 ? "bearish" : "neutral";
 
+  // Root container also sets dir explicitly (keeps UI consistent even before effect runs)
+  const rootDir = i18n.language === "fa" || t("global.isRTL") === "true" ? "rtl" : "ltr";
+
   return (
-    <div className="min-h-screen bg-background particle-bg">
+    <div className="min-h-screen bg-background particle-bg" dir={rootDir}>
       <AchievementPopup
         show={showAchievement}
         title={achievementData.title}
@@ -308,15 +343,26 @@ export function CryptoSentimentProDashboard({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => { trackClick?.('header', { action: 'navigate_tutorials' }); navigate("/tutorials"); }}
+                  onClick={() => {
+                    trackClick?.("header", { action: "navigate_tutorials" });
+                    navigate("/tutorials");
+                  }}
                   className="gap-2"
                 >
                   <BookOpen className="w-4 h-4" />
                   <span className="hidden sm:inline">{t("tutorials.title")}</span>
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => { trackClick?.('header', { action: 'navigate_partners' }); navigate("/partners"); }} className="gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    trackClick?.("header", { action: "navigate_partners" });
+                    navigate("/partners");
+                  }}
+                  className="gap-2"
+                >
                   <Users className="w-4 h-4" />
-                  <span className="hidden sm:inline">Partners</span>
+                  <span className="hidden sm:inline">{t("partners.short")}</span>
                 </Button>
                 <NotificationCenter />
                 <AIAssistantPanel />
@@ -345,8 +391,16 @@ export function CryptoSentimentProDashboard({
         </div>
 
         <AnimatePresence mode="wait">
-          <motion.div key={viewMode} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
-            <section className="mb-8"><PerformanceBacktest /></section>
+          <motion.div
+            key={viewMode}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <section className="mb-8">
+              <PerformanceBacktest />
+            </section>
             <section className="mb-8">
               <MarketGauge riskIndex={marketRisk} summary={data.fundamental.summary} verdict={marketVerdict} />
             </section>
@@ -363,7 +417,12 @@ export function CryptoSentimentProDashboard({
 
                 {viewMode === "technical" && <TechnicalPanel data={data.technical} />}
 
-                {viewMode === "combined" && <AggregatorPanel aggregatedData={aggregatedData} weights={profile?.weights ?? { fundamental: 0.6, technical: 0.4 }} />}
+                {viewMode === "combined" && (
+                  <AggregatorPanel
+                    aggregatedData={aggregatedData}
+                    weights={profile?.weights ?? { fundamental: 0.6, technical: 0.4 }}
+                  />
+                )}
               </CategorySection>
             )}
 
@@ -371,11 +430,20 @@ export function CryptoSentimentProDashboard({
               <CategorySection type="user-adaptive">
                 {viewMode === "user-technical" && <TechnicalAnalysisZone />}
                 {viewMode === "news-analysis" && <NewsAnalysisSection />}
-                {viewMode === "signal-aggregator" && <EnhancedAggregatorPanel aggregatedData={aggregatedData} weights={profile?.weights ?? { fundamental: 0.6, technical: 0.4 }} />}
+                {viewMode === "signal-aggregator" && (
+                  <EnhancedAggregatorPanel
+                    aggregatedData={aggregatedData}
+                    weights={profile?.weights ?? { fundamental: 0.6, technical: 0.4 }}
+                  />
+                )}
               </CategorySection>
             )}
 
-            {viewMode === "reports" && <section><ReportsTab data={data} /></section>}
+            {viewMode === "reports" && (
+              <section>
+                <ReportsTab data={data} />
+              </section>
+            )}
           </motion.div>
         </AnimatePresence>
       </main>
