@@ -1,3 +1,4 @@
+// src/components/AggregatorPanel.tsx
 import { useState } from "react";
 import { Download, Settings } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -11,8 +12,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { BarChart, Bar, LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from "recharts";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Cell,
+} from "recharts";
 import type { AggregatedCoinData } from "@/lib/aggregator";
+import { useTranslation } from "react-i18next";
 
 // Import coin logos
 import btcLogo from "@/assets/coins/btc.png";
@@ -42,11 +54,13 @@ export function AggregatorPanel({
   weights,
   onWeightsChange,
 }: AggregatorPanelProps) {
+  const { t } = useTranslation();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const getDecisionColor = (decision: string) => {
-    if (decision === "BUY") return "positive";
-    if (decision === "SELL") return "negative";
+  const getDecisionColor = (decision?: string) => {
+    const d = (decision || "").toUpperCase();
+    if (d === "BUY") return "positive";
+    if (d === "SELL") return "negative";
     return "neutral";
   };
 
@@ -92,69 +106,59 @@ export function AggregatorPanel({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Signal Aggregator</h2>
+        <h2 className="text-2xl font-bold">{t("aggregator.title")}</h2>
         <div className="flex items-center gap-2">
           <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm">
                 <Settings className="w-4 h-4 mr-2" />
-                Weights
+                {t("aggregator.weights")}
               </Button>
             </DialogTrigger>
             <DialogContent className="glass-card">
               <DialogHeader>
-                <DialogTitle>Adjust Signal Weights</DialogTitle>
+                <DialogTitle>{t("aggregator.adjustWeights")}</DialogTitle>
               </DialogHeader>
               <div className="space-y-6 mt-4">
                 <p className="text-sm text-muted-foreground">
-                  Weights are managed in your Trader Profile settings.
+                  {t("aggregator.weightsManaged")}
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">Fundamental Weight</label>
+                    <label className="text-sm font-medium">{t("aggregator.fundamentalWeight")}</label>
                     <span className="text-sm text-muted-foreground">
                       {(weights.fundamental * 100).toFixed(0)}%
                     </span>
                   </div>
-                  <Slider
-                    value={[weights.fundamental * 100]}
-                    disabled
-                    min={0}
-                    max={100}
-                  />
+                  <Slider value={[weights.fundamental * 100]} disabled min={0} max={100} />
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">Technical Weight</label>
+                    <label className="text-sm font-medium">{t("aggregator.technicalWeight")}</label>
                     <span className="text-sm text-muted-foreground">
                       {(weights.technical * 100).toFixed(0)}%
                     </span>
                   </div>
-                  <Slider
-                    value={[weights.technical * 100]}
-                    disabled
-                    min={0}
-                    max={100}
-                  />
+                  <Slider value={[weights.technical * 100]} disabled min={0} max={100} />
                 </div>
               </div>
             </DialogContent>
           </Dialog>
-          
+
           <Button variant="outline" size="sm" onClick={() => exportData("csv")}>
             <Download className="w-4 h-4 mr-2" />
-            Export CSV
+            {t("aggregator.exportCsv")}
           </Button>
           <Button variant="outline" size="sm" onClick={() => exportData("json")}>
             <Download className="w-4 h-4 mr-2" />
-            Export JSON
+            {t("aggregator.exportJson")}
           </Button>
         </div>
       </div>
 
       {/* Aggregated Scores Bar Chart */}
       <Card className="glass-card p-6">
-        <h3 className="text-lg font-semibold mb-4">Combined Scores</h3>
+        <h3 className="text-lg font-semibold mb-4">{t("aggregator.combinedScores")}</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={scoreData}>
@@ -171,9 +175,9 @@ export function AggregatorPanel({
                 {scoreData.map((entry, index) => {
                   const decision = aggregatedData[entry.coin]?.decision;
                   const color =
-                    decision === "BUY"
+                    (decision || "").toUpperCase() === "BUY"
                       ? "hsl(var(--positive))"
-                      : decision === "SELL"
+                      : (decision || "").toUpperCase() === "SELL"
                       ? "hsl(var(--negative))"
                       : "hsl(var(--neutral))";
                   return <Cell key={`cell-${index}`} fill={color} />;
@@ -193,9 +197,20 @@ export function AggregatorPanel({
           const decisionColor = getDecisionColor(coinData.decision);
           const chartData = coinData.history.map((value, index) => ({ index, value }));
 
+          // safety: avoid division by zero / NaN when final_score is 0
+          const totalContribution =
+            coinData.final_score && coinData.final_score > 0
+              ? coinData.final_score
+              : Math.max(coinData.fundamental_contribution + coinData.technical_contribution, 1);
+
+          const fundamentalPct = (coinData.fundamental_contribution / totalContribution) * 100;
+          const technicalPct = (coinData.technical_contribution / totalContribution) * 100;
+
+          const decisionKey = (coinData.decision || "").toLowerCase();
+
           return (
-            <Card 
-              key={coin} 
+            <Card
+              key={coin}
               className={`glass-card p-6 transition-all duration-300 hover:scale-[1.02] cursor-pointer ${
                 decisionColor === "positive"
                   ? "hover:border-positive hover:shadow-[0_0_20px_hsl(var(--positive)/0.3)]"
@@ -209,7 +224,11 @@ export function AggregatorPanel({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full flex items-center justify-center p-1.5 bg-card/50 border border-border">
-                      <img src={COIN_LOGOS[coin]} alt={`${coin} logo`} className="w-full h-full object-contain" />
+                      <img
+                        src={COIN_LOGOS[coin]}
+                        alt={`${coin} logo`}
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                     <h3 className="text-lg font-bold">{coin}</h3>
                   </div>
@@ -223,7 +242,7 @@ export function AggregatorPanel({
                         : "border-neutral text-neutral"
                     }`}
                   >
-                    {coinData.decision}
+                    {decisionKey ? t(`signals.${decisionKey}`) : t("signals.neutral")}
                   </Badge>
                 </div>
 
@@ -231,7 +250,7 @@ export function AggregatorPanel({
                 <div className="space-y-3">
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-muted-foreground">Final Score</span>
+                      <span className="text-sm text-muted-foreground">{t("aggregator.finalScore")}</span>
                       <span className="text-xl font-bold">
                         {(coinData.final_score * 100).toFixed(0)}%
                       </span>
@@ -252,7 +271,7 @@ export function AggregatorPanel({
 
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-muted-foreground">Confidence</span>
+                      <span className="text-sm text-muted-foreground">{t("aggregator.confidence")}</span>
                       <span className="text-lg font-semibold">
                         {(coinData.final_confidence * 100).toFixed(0)}%
                       </span>
@@ -268,29 +287,19 @@ export function AggregatorPanel({
 
                 {/* Contribution Breakdown */}
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">Signal Breakdown</p>
+                  <p className="text-sm text-muted-foreground mb-2">{t("aggregator.signalBreakdown")}</p>
                   <div className="flex h-3 rounded-full overflow-hidden">
-                    <div
-                      className="bg-primary"
-                      style={{
-                        width: `${(coinData.fundamental_contribution / coinData.final_score) * 100}%`,
-                      }}
-                    />
-                    <div
-                      className="bg-secondary"
-                      style={{
-                        width: `${(coinData.technical_contribution / coinData.final_score) * 100}%`,
-                      }}
-                    />
+                    <div className="bg-primary" style={{ width: `${fundamentalPct}%` }} />
+                    <div className="bg-secondary" style={{ width: `${technicalPct}%` }} />
                   </div>
                   <div className="flex items-center justify-between mt-2 text-xs">
                     <span className="flex items-center gap-1">
                       <div className="w-2 h-2 rounded-full bg-primary" />
-                      Fundamental
+                      {t("profile.fundamental")}
                     </span>
                     <span className="flex items-center gap-1">
                       <div className="w-2 h-2 rounded-full bg-secondary" />
-                      Technical
+                      {t("profile.technical")}
                     </span>
                   </div>
                 </div>

@@ -11,7 +11,7 @@ import Tutorials from "./pages/Tutorials";
 import PartnersInvestors from "./pages/PartnersInvestors";
 import NotFound from "./pages/NotFound";
 import "./i18n/config";
-
+import "@/styles/fonts.css";
 const queryClient = new QueryClient();
 
 const App = () => (

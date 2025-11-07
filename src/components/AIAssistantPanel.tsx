@@ -66,31 +66,31 @@ export function AIAssistantPanel() {
 
     try {
       const { supabase } = await import("@/integrations/supabase/client");
-      
-      const { data, error } = await supabase.functions.invoke('ai-chat', {
+
+      const { data, error } = await supabase.functions.invoke("ai-chat", {
         body: {
-          messages: messages.concat(userMessage).map(m => ({
-            role: m.role,
-            content: m.content
-          })),
-          type: "general"
-        }
+          messages: messages
+            .concat(userMessage)
+            .map((m) => ({ role: m.role, content: m.content })),
+          type: "general",
+        },
       });
 
       if (error) throw error;
 
+      const aiContent = data?.response || t("ai.errorProcessing");
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.response || "I'm having trouble processing your request right now. Please try again.",
+        content: aiContent,
       };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
-      console.error('AI chat error:', error);
+      console.error("AI chat error:", error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Sorry, I'm experiencing connection issues. Please try again in a moment.",
+        content: t("ai.errorConnection"),
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -117,7 +117,7 @@ export function AIAssistantPanel() {
             {t("ai.assistant")}
           </SheetTitle>
           <SheetDescription>
-            Your expert trading advisor powered by AI
+            {t("ai.assistantDescription")}
           </SheetDescription>
         </SheetHeader>
 

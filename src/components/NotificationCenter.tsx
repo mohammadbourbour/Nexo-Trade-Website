@@ -96,7 +96,7 @@ export function NotificationCenter() {
             )}
           </SheetTitle>
           <SheetDescription>
-            Stay updated with latest signals and analysis
+            {t("notifications.sheetDescription")}
           </SheetDescription>
         </SheetHeader>
 
@@ -109,7 +109,7 @@ export function NotificationCenter() {
                 className="text-center py-12"
               >
                 <Bell className="w-12 h-12 mx-auto text-muted-foreground mb-3 opacity-50" />
-                <p className="text-muted-foreground">No notifications</p>
+                <p className="text-muted-foreground">{t("notifications.noNotifications")}</p>
               </motion.div>
             ) : (
               notifications.map((notification) => (

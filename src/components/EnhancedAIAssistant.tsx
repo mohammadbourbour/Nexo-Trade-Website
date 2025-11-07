@@ -1,3 +1,4 @@
+// src/components/EnhancedAIAssistant.tsx
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send, Loader2, ThumbsUp, ThumbsDown } from 'lucide-react';
@@ -9,6 +10,7 @@ import { useBehaviorTracking } from '@/hooks/useBehaviorTracking';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface Message {
   id: string;
@@ -22,7 +24,16 @@ interface EnhancedAIAssistantProps {
   contextData?: Record<string, any>;
 }
 
+/**
+ * Helper: resolve a value that might be a plain value or a function returning that value.
+ * This keeps typing explicit and avoids TS errors when a value can be () => T | T
+ */
+function resolveMaybeFn<T>(maybeFn: T | (() => T)): T {
+  return typeof maybeFn === 'function' ? (maybeFn as () => T)() : (maybeFn as T);
+}
+
 export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData = {} }: EnhancedAIAssistantProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -32,21 +43,28 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
   const { trackQuestion } = useBehaviorTracking();
   const { toast } = useToast();
 
+  // support getAITone either as value or function (safe, typed)
+  const resolvedTone = resolveMaybeFn<string | undefined>(getAITone) ?? undefined;
+
   const getGreeting = () => {
-    const tone = getAITone;
-    if (tone === 'casual') {
-      return "Hey! 👋 Got questions? I'm here to help! Ask me anything! 🚀";
+    if (resolvedTone === 'casual') {
+      return t('ai.enhanced.greeting.casual');
     }
-    if (tone === 'friendly') {
-      return "Hello! 👋 Do you have any questions? Feel free to ask!";
+    if (resolvedTone === 'friendly') {
+      return t('ai.enhanced.greeting.friendly');
     }
-    return "Hello. How may I assist you today?";
+    return t('ai.enhanced.greeting.default');
   };
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    // auto-scroll when messages change
+    const el = scrollRef.current;
+    if (!el) return;
+    // slight delay to let layout settle
+    const id = window.setTimeout(() => {
+      el.scrollTop = el.scrollHeight;
+    }, 50);
+    return () => window.clearTimeout(id);
   }, [messages]);
 
   const sendMessage = async () => {
@@ -63,16 +81,16 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
     setIsLoading(true);
 
     try {
-      // Track the question
-      trackQuestion(currentSection, input);
+      // Track the question (optional chaining in case hook returns undefined)
+      trackQuestion?.(currentSection, input);
 
       // Prepare context for AI
       const context = {
         section: currentSection,
-        skillLevel: skillProfile.skillLevel,
-        skillScore: skillProfile.skillScore,
+        skillLevel: skillProfile?.skillLevel,
+        skillScore: skillProfile?.skillScore,
         complexity,
-        tone: getAITone,
+        tone: resolvedTone,
         data: contextData,
       };
 
@@ -90,33 +108,41 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.response,
-        conversationId: data.conversationId,
+        content: data?.response ?? t('ai.enhanced.fallbackResponse'),
+        conversationId: data?.conversationId,
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to get response from AI assistant',
+    } catch (err) {
+      console.error('Error sending message:', err);
+      toast?.({
+        title: t('common.error') ?? 'Error',
+        description: t('ai.enhanced.failedToRespond') ?? 'Failed to get response from AI assistant',
         variant: 'destructive',
       });
+
+      const errorMessage: Message = {
+        id: (Date.now() + 2).toString(),
+        role: 'assistant',
+        content: t('ai.enhanced.offlineMessage'),
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleFeedback = async (conversationId: string, helpful: boolean) => {
+  const handleFeedback = async (conversationId: string | undefined, helpful: boolean) => {
+    if (!conversationId) return;
     try {
       await supabase
         .from('ai_conversations')
         .update({ was_helpful: helpful })
         .eq('id', conversationId);
 
-      toast({
-        title: helpful ? 'Thanks for your feedback! 👍' : 'Thanks for letting us know',
-        description: helpful ? 'Glad I could help!' : "I'll try to improve",
+      toast?.({
+        title: helpful ? t('feedback.thanksHelpful') : t('feedback.thanksNotHelpful'),
+        description: helpful ? t('feedback.thanksHelpfulDesc') : t('feedback.thanksNotHelpfulDesc'),
       });
     } catch (error) {
       console.error('Error submitting feedback:', error);
@@ -124,7 +150,7 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
   };
 
   const getButtonAnimation = () => {
-    if (getAITone === 'casual') {
+    if (resolvedTone === 'casual') {
       return {
         scale: [1, 1.1, 1],
         rotate: [0, 5, -5, 0],
@@ -147,6 +173,7 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
             <motion.button
               whileHover={getButtonAnimation()}
               onClick={() => setIsOpen(true)}
+              aria-label={t('ai.openAssistant')}
               className="relative w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary shadow-lg neon-glow"
             >
               <MessageCircle className="w-8 h-8 text-primary-foreground absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
@@ -171,6 +198,9 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 400, opacity: 0 }}
             className="fixed bottom-8 right-8 w-96 h-[600px] z-50 glass-card rounded-2xl border border-primary/30 shadow-2xl flex flex-col overflow-hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('ai.assistant')}
           >
             {/* Header */}
             <div className="p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10">
@@ -180,9 +210,9 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
                     <MessageCircle className="w-5 h-5 text-primary-foreground" />
                   </div>
                   <div>
-                    <h3 className="font-bold gradient-text">AI Assistant</h3>
+                    <h3 className="font-bold gradient-text">{t('ai.assistant')}</h3>
                     <p className="text-xs text-muted-foreground">
-                      {skillProfile.skillLevel} level
+                      {t('ai.skillLevel', { level: skillProfile?.skillLevel ?? '—' })}
                     </p>
                   </div>
                 </div>
@@ -191,6 +221,7 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
                   size="icon"
                   onClick={() => setIsOpen(false)}
                   className="hover:bg-destructive/10"
+                  aria-label={t('common.close')}
                 >
                   <X className="w-5 h-5" />
                 </Button>
@@ -218,7 +249,7 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
                     key={message.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
+                    transition={{ delay: idx * 0.05 }}
                     className={cn(
                       'flex',
                       message.role === 'user' ? 'justify-end' : 'justify-start'
@@ -238,16 +269,18 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleFeedback(message.conversationId!, true)}
+                            onClick={() => handleFeedback(message.conversationId, true)}
                             className="h-6 px-2"
+                            aria-label={t('feedback.helpful')}
                           >
                             <ThumbsUp className="w-3 h-3" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleFeedback(message.conversationId!, false)}
+                            onClick={() => handleFeedback(message.conversationId, false)}
                             className="h-6 px-2"
+                            aria-label={t('feedback.notHelpful')}
                           >
                             <ThumbsDown className="w-3 h-3" />
                           </Button>
@@ -262,10 +295,10 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex items-center gap-2 text-muted-foreground"
+                  className="flex items-center gap-2 text-muted-foreground mt-2"
                 >
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm">Thinking...</span>
+                  <span className="text-sm">{t('ai.thinking')}</span>
                 </motion.div>
               )}
             </ScrollArea>
@@ -282,14 +315,16 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask me anything..."
+                  placeholder={t('ai.askQuestion')}
                   disabled={isLoading}
                   className="flex-1"
+                  aria-label={t('ai.askQuestion')}
                 />
                 <Button
                   type="submit"
                   disabled={!input.trim() || isLoading}
                   className="neon-glow"
+                  aria-label={t('ai.send')}
                 >
                   <Send className="w-4 h-4" />
                 </Button>

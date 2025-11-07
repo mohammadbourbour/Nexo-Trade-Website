@@ -1,6 +1,8 @@
+// src/components/AchievementPopup.tsx
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface AchievementPopupProps {
   show: boolean;
@@ -10,6 +12,8 @@ interface AchievementPopupProps {
 }
 
 export function AchievementPopup({ show, title, description, onClose }: AchievementPopupProps) {
+  const { t } = useTranslation();
+
   return (
     <AnimatePresence>
       {show && (
@@ -18,6 +22,8 @@ export function AchievementPopup({ show, title, description, onClose }: Achievem
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -100, scale: 0.8 }}
           className="fixed top-4 right-4 z-50 max-w-sm"
+          role="status"
+          aria-live="polite"
         >
           <div className="glass-card p-4 border-2 border-primary/50 neon-glow">
             <div className="flex items-start gap-3">
@@ -33,10 +39,10 @@ export function AchievementPopup({ show, title, description, onClose }: Achievem
                   <Trophy className="w-6 h-6 text-white" />
                 </div>
               </motion.div>
-              
+
               <div className="flex-1">
                 <h3 className="font-bold text-lg gradient-text mb-1">
-                  Achievement Unlocked!
+                  {t("achievements.unlocked") || "Achievement Unlocked!"}
                 </h3>
                 <p className="font-medium mb-1">{title}</p>
                 <p className="text-sm text-muted-foreground">{description}</p>
@@ -47,6 +53,7 @@ export function AchievementPopup({ show, title, description, onClose }: Achievem
                 size="icon"
                 onClick={onClose}
                 className="h-6 w-6 flex-shrink-0"
+                aria-label={t("common.close") || "Close"}
               >
                 <X className="w-4 h-4" />
               </Button>

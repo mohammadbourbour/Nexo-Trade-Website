@@ -1,194 +1,640 @@
 {
+  "adaptiveCoin": {
+    "analysis": "تحلیل",
+    "confidence": "اطمینان",
+    "evidenceSources": "منابع شواهد",
+    "hintCareful": "مراقب باشید!",
+    "hintGood": "نشانه‌های خوب!",
+    "hintMixed": "نشانه‌های مختلف",
+    "score": "امتیاز",
+    "sentimentBadgeAria": "وضعیت احساسات: {{sentiment}}",
+    "sentimentScore": "امتیاز احساسات",
+    "why": "چرا؟"
+  },
+  "achievement": {
+    "levelUp": {
+      "description": "شما به سطح {{level}} رسیدید!",
+      "title": "افزایش سطح!"
+    }
+  },
+  "achievements": {
+    "unlocked": "دستاورد باز شد!"
+  },
+  "ai": {
+    "assistant": "دستیار هوش مصنوعی",
+    "assistantDescription": "مشاور معاملاتی هوشمند شما با پشتیبانی هوش مصنوعی",
+    "askQuestion": "هر سوالی درباره سیگنال‌ها، شاخص‌ها یا مدیریت ریسک بپرسید...",
+    "errorConnection": "متاسفیم، در ارتباط با سرور مشکلی پیش آمده. لطفاً بعداً دوباره تلاش کنید.",
+    "errorProcessing": "در پردازش درخواست شما مشکلی وجود دارد. لطفاً کمی بعد دوباره تلاش کنید.",
+    "genGWelcome": "",
+    "genXWelcome": "خوش آمدید! بیایید با هم بازار را تحلیل کنیم و تصمیمات آگاهانه بگیریم.",
+    "genZWelcome": "سلام! 👋 آماده‌ای برای تحلیل‌های حرفه‌ای؟ بریم که وقت پوله! 🚀",
+    "send": "ارسال",
+    "thinking": "در حال فکر کردن..."
+  },
+  "auth": {
+    "cancel": "لغو",
+    "checkEmail": "لطفا ایمیل خود را برای تایید حساب بررسی کنید",
+    "checkEmailReset": "لطفا ایمیل خود را برای دستورالعمل‌های بازنشانی رمز عبور بررسی کنید",
+    "confirmPassword": "تایید رمز عبور",
+    "confirmPasswordPlaceholder": "رمز عبور را تایید کنید",
+    "email": "ایمیل",
+    "emailPlaceholder": "ایمیل خود را وارد کنید",
+    "enterEmail": "ایمیل را وارد کنید",
+    "enterEmailFirst": "لطفا ابتدا ایمیل خود را وارد کنید",
+    "forgotPassword": "رمز عبور را فراموش کردید؟",
+    "invalidCredentials": "ایمیل یا رمز عبور نامعتبر",
+    "login": "ورود",
+    "loginError": "ورود ناموفق",
+    "loginSuccess": "ورود موفق!",
+    "loggingIn": "در حال ورود...",
+    "logout": "خروج",
+    "logoutConfirm": "آیا مطمئن هستید که می‌خواهید خارج شوید؟",
+    "logoutDescription": "منتظر دیدار مجدد شما هستیم!",
+    "logoutError": "خروج ناموفق",
+    "logoutMessage": "شما به صفحه ورود هدایت خواهید شد.",
+    "logoutSuccess": "خروج موفق",
+    "name": "نام",
+    "namePlaceholder": "نام خود را وارد کنید",
+    "password": "رمز عبور",
+    "passwordPlaceholder": "رمز عبور خود را وارد کنید",
+    "passwordMedium": "قدرت متوسط",
+    "passwordStrong": "رمز عبور قوی",
+    "passwordWeak": "رمز عبور ضعیف",
+    "resetEmailSent": "ایمیل بازنشانی ارسال شد",
+    "resetError": "بازنشانی ناموفق",
+    "signingUp": "در حال ایجاد حساب...",
+    "signup": "ثبت‌نام",
+    "signupError": "ثبت‌نام ناموفق",
+    "signupSuccess": "حساب ایجاد شد!",
+    "validationError": "خطای اعتبارسنجی",
+    "welcome": "خوش آمدید",
+    "welcomeBack": "به نکسو ترید خوش آمدید",
+    "welcomeDescription": "برای دسترسی به داشبورد وارد شوید",
+    "rememberMe": "مرا به خاطر بسپار"
+
+  },
+  "category": {
+    "ai": {
+      "subtitle": "تحلیل کامل توسط هوش مصنوعی",
+      "title": "تحلیل‌های مبتنی بر هوش مصنوعی"
+    },
+    "user": {
+      "subtitle": "شخصی‌سازی‌شده بر اساس ترجیحات و ورودی‌های شما",
+      "title": "تحلیل‌های تطبیقی کاربر"
+    }
+  },
+  "coin": {
+    "names": {
+    "BTC": "بیت‌کوین",
+    "ETH": "اتریوم",
+    "XRP": "ریپل",
+    "SOL": "سولانا",
+    "DOGE": "دوج‌کوین"
+  },
+  "logoAlt": "لوگوی {{coin}}",
+  "detailsTitle": "تحلیل جزئی {{coin}}",
+  "topSources": "منابع برتر",
+  "historicalTrend": "روند تاریخی",
+  
+  
+  
+
+    "labels": {
+      "analysis": "تحلیل",
+      "confidence": "اطمینان",
+      "evidenceSources": "منابع شواهد",
+      "score": "امتیاز",
+      "sentimentScore": "امتیاز احساس بازار",
+      "why": "چرا؟",
+      "evidenceSourcesCount": "{{count}} منبع"
+    },
+    "notes": {
+      "beCareful": "محتاط باش!",
+      "goodSigns": "نشان‌های مثبت!",
+      "mixedSignals": "سیگنال‌های متناقض"
+    },
+    "score": "امتیاز",
+    "sentiment": {
+      "negative": "منفی",
+      "neutral": "خنثی",
+      "positive": "مثبت"
+    },
+    "confidence": "اطمینان",
+    "viewDetails": "مشاهده جزئیات"
+  },
+  "common": {
+    "readMore": "بیشتر بخوانید",
+    "close": "بستن"
+  },
   "dashboard": {
-    "title": "نکسو ترید",
-    "subtitle": "تحلیل معاملاتی مبتنی بر هوش مصنوعی",
+    "autoRefresh": "بروزرسانی خودکار",
+    "backendUnreachable": {
+      "description": "نمایش داده‌های ذخیره‌شده یا محتوای نمونه. تمام ویژگی‌ها ممکن است محدود باشند.",
+      "title": "بک‌اند در دسترس نیست"
+    },
+    "cachedData": {
+      "description": "نتوانستیم دادهٔ لایو را دریافت کنیم، نسخهٔ کش‌شده نمایش داده می‌شود",
+      "title": "نمایش داده‌های ذخیره‌شده"
+    },
+    "dataRefreshed": {
+      "description": "آخرین داده‌های بازار با موفقیت بارگذاری شد",
+      "title": "داده‌ها به‌روز شدند"
+    },
+    "errorLoading": {
+      "description": "اتصال خود را بررسی کنید و دوباره تلاش کنید",
+      "title": "خطا در بارگذاری داده"
+    },
     "lastUpdate": "آخرین بروزرسانی",
+    "loading": "در حال بارگذاری داشبورد...",
     "nextUpdate": "بروزرسانی بعدی",
     "refresh": "بروزرسانی",
-    "autoRefresh": "بروزرسانی خودکار"
+    "subtitle": "تحلیل معاملاتی مبتنی بر هوش مصنوعی",
+    "title": "نکسو ترید"
   },
-  "tradingStyle": {
-    "short": "کوتاه‌مدت",
-    "mid": "میان‌مدت",
-    "long": "بلندمدت"
+  "gamification": {
+    "accuracyStreak": "دقت متوالی",
+    "achievements": "دستاوردها",
+    "badges": "نشان‌ها",
+    "coins": "سکه",
+    "leaderboard": "جدول رتبه‌بندی",
+    "topAnalyst": "1% برتر تحلیلگران",
+    "xp": "تجربه",
+    "yourRank": "رتبه شما",
+    "riskMaster": "استاد ریسک",
+    "sheetDescription": "پیشرفت خود را دنبال کنید و با سایر معامله‌گران رقابت کنید",
+    "levelProgress": "پیشرفت سطح",
+    "topTraders": "بهترین معامله‌گران",
+    "accuracyLabel": "دقت {{percent}}٪"
+  },
+  "global": {
+    "isRTL": "true"
+  },
+  "market": {
+    "riskIndexLabel": "شاخص ریسک بازار",
+  "summaryTitle": "خلاصهٔ بازار (هوش مصنوعی)",
+  "overallLabel": "وضعیت کلی بازار:",
+  "riskLevels": {
+    "low": "کم",
+    "moderate": "متوسط",
+    "high": "زیاد"
+  },
+  "riskSuffix": "ریسک",
+  
+    "overview": "نمای کلی بازار",
+    "riskIndex": "شاخص ریسک",
+    "verdict": {
+      "bearish": "نزولی",
+      "bullish": "صعودی",
+      "neutral": "خنثی"
+    }
+  },
+  "navigation": {
+    "categories": {
+      "ai": "تحلیل‌های مبتنی بر هوش مصنوعی",
+      "ai_short": "هوش",
+      "user": "تحلیل‌های تطبیقی با کاربر",
+      "user_short": "کاربر"
+    }
+  },
+  "notifications": {
+    "clear": "پاک کردن همه",
+    "noNotifications": "هیچ اعلانی وجود ندارد",
+    "newAnalysis": "تحلیل جدید در دسترس است",
+    "sheetDescription": "با آخرین سیگنال‌ها و تحلیل‌ها به‌روز بمانید",
+    "signalChange": "تغییر سیگنال شناسایی شد",
+    "title": "اعلان‌ها"
+  },
+  "partners": {
+    "backToDashboard": "بازگشت به داشبورد",
+    "business": {
+      "content": "• فروش B2B به صرافی‌ها و پلتفرم‌های مالی (SaaS Licensing)\n• دسترسی API برای استارتاپ‌ها و ربات‌های ترید\n• پلن‌های اشتراکی برای تریدرهای حرفه‌ای\n• راه‌حل‌های White-label برای موسسات مالی",
+      "title": "مدل درآمدی"
+    },
+    "cta": {
+      "button": "تماس با ما",
+      "subtitle": "بیایید درباره اینکه نکسو ترید چگونه می‌تواند پلتفرم شما را متحول کند صحبت کنیم",
+      "title": "آماده همکاری با ما هستید؟"
+    },
+    "hero": {
+      "subtitle": "پلتفرم تحلیل معاملاتی مبتنی بر هوش مصنوعی",
+      "title": "برای شرکا و سرمایه‌گذاران"
+    },
+    "outputs": {
+      "content": "• سیگنال‌های خرید، فروش یا خنثی با درصد اطمینان\n• تحلیل احساسی و فنی هم‌زمان برای ارزهای مهم\n• نمونه‌هایی از خروجی‌های واقعی یا شبیه‌سازی‌شده\n• تحلیل چند تایم‌فریم با ارزیابی ریسک",
+      "title": "نمونه خروجی‌ها"
+    },
+    "problem": {
+      "content": "اکثر ابزارهای ترید موجود یا بیش از حد پیچیده‌اند یا تحلیل عمیقی ارائه نمی‌دهند.\n\nتریدرها مجبورند برای بررسی تحلیل تکنیکال، فاندامنتال و اخبار بین چند پلتفرم مختلف جابه‌جا شوند که باعث اتلاف وقت و کاهش دقت می‌شود.",
+      "title": "مشکل بازار"
+    },
+    "roadmap": {
+      "content": "✅ تکمیل نسخه MVP و تست داخلی\n🔄 اتصال به داده زنده و چارت TradingView\n🤝 همکاری آزمایشی با صرافی‌ها و بروکرها\n🚀 گسترش تحلیل‌ها به بازار طلا و فارکس\n💼 جذب سرمایه برای توسعه فاز دوم",
+      "title": "نقشه رشد ۶ ماه آینده"
+    },
+    "solution": {
+      "content": "پلتفرم ما، نکسو ترید، یک سیستم تحلیل هوشمند و ماژولار مبتنی بر هوش مصنوعی است که به‌راحتی در هر وب‌سایتی با ساختار JavaScript قابل ادغام است.\n\nاین پلتفرم ترکیبی از تحلیل احساسی اخبار (AI Sentiment)، تحلیل تکنیکال خودکار و سیگنال نهایی ترکیبی (Signal Aggregator) ارائه می‌دهد.\n\nدر بازارهای مختلف مثل کریپتو، طلا، سهام و فارکس قابل استفاده است و نتایج را با توجه به سبک ترید هر کاربر (کوتاه‌مدت، میان‌مدت، بلندمدت) تنظیم می‌کند.",
+      "title": "راه‌حل ما"
+    },
+    "short": "شرکا"
+  },
+  "performance": {
+    "accuracy": "دقت سیگنال",
+    "avgProfit": "میانگین سود",
+    "description": "معیارهای عملکرد تاریخی و نتایج شبیه‌سازی‌شده",
+    "disclaimer": "اینها نتایج بک‌تست نمونه و صرفاً برای نمایش هستند.",
+    "last30Days": "۳۰ روز گذشته",
+    "lastMonth": "ماه گذشته",
+    "perSignal": "در هر سیگنال",
+    "successful": "معاملات موفق",
+    "title": "اطلاعات عملکرد / بک‌تست",
+    "totalSignals": "کل سیگنال‌ها",
+    "winRate": "نرخ موفقیت"
+  },
+  "profile": {
+    "actions": {
+      "getStarted": "شروع کن",
+      "launchDashboard": "ورود به داشبورد"
+    },
+    "fundamental": "بنیادی",
+    "high": "زیاد",
+    "low": "کم",
+    "medium": "متوسط",
+    "savePreferences": "ذخیره تنظیمات",
+    "sheetDescription": "تجربهٔ معاملاتی خود را شخصی‌سازی کنید",
+    "technical": "تکنیکال",
+    "toast": {
+      "savedDesc": "ترجیحات معاملاتی شما بروز شد",
+      "savedTitle": "تنظیمات ذخیره شد"
+    },
+    "title": "پروفایل معامله‌گر",
+    "tradingStyle": "سبک معاملاتی",
+    "weights": "وزن شاخص‌ها",
+    "riskTolerance": "تحمل ریسک"
+  },
+  "signals": {
+    "buy": "خرید",
+    "decision": "تصمیم",
+    "finalConfidence": "اطمینان نهایی",
+    "finalScore": "امتیاز نهایی",
+    "hold": "نگه‌داری",
+    "sell": "فروش"
   },
   "tabs": {
     "combined": "ترکیبی",
     "fundamental": "بنیادی",
-    "technical": "تکنیکال",
-    "user-technical": "تحلیل نمودار",
     "news-analysis": "تحلیل اخبار",
+    "reports": "گزارش‌ها",
     "signal-aggregator": "تجمیع سیگنال",
-    "reports": "گزارش‌ها"
-  },
-  "market": {
-    "overview": "نمای کلی بازار",
-    "riskIndex": "شاخص ریسک",
-    "verdict": {
-      "bullish": "صعودی",
-      "neutral": "خنثی",
-      "bearish": "نزولی"
-    }
-  },
-  "coin": {
-    "score": "امتیاز",
-    "confidence": "اطمینان",
-    "viewDetails": "مشاهده جزئیات",
-    "sentiment": {
-      "positive": "مثبت",
-      "neutral": "خنثی",
-      "negative": "منفی"
-    }
-  },
-  "signals": {
-    "buy": "خرید",
-    "sell": "فروش",
-    "hold": "نگه‌داری",
-    "finalScore": "امتیاز نهایی",
-    "finalConfidence": "اطمینان نهایی",
-    "decision": "تصمیم"
-  },
-  "profile": {
-    "title": "پروفایل معامله‌گر",
-    "tradingStyle": "سبک معاملاتی",
-    "riskTolerance": "تحمل ریسک",
-    "low": "کم",
-    "medium": "متوسط",
-    "high": "زیاد",
-    "weights": "وزن شاخص‌ها",
-    "fundamental": "بنیادی",
     "technical": "تکنیکال",
-    "savePreferences": "ذخیره تنظیمات"
+    "user-technical": "تحلیل نمودار"
   },
-  "gamification": {
-    "leaderboard": "جدول رتبه‌بندی",
-    "yourRank": "رتبه شما",
-    "xp": "تجربه",
-    "coins": "سکه",
-    "badges": "نشان‌ها",
-    "achievements": "دستاوردها",
-    "topAnalyst": "1% برتر تحلیلگران",
-    "riskMaster": "استاد ریسک",
-    "accuracyStreak": "دقت متوالی"
-  },
-  "ai": {
-    "assistant": "دستیار هوش مصنوعی",
-    "askQuestion": "هر سوالی درباره سیگنال‌ها، شاخص‌ها یا مدیریت ریسک بپرسید...",
-    "send": "ارسال",
-    "thinking": "در حال فکر کردن...",
-    "genZWelcome": "سلام! 👋 آماده‌ای برای تحلیل‌های حرفه‌ای؟ بریم که وقت پوله! 🚀",
-    "genXWelcome": "خوش آمدید! بیایید با هم بازار را تحلیل کنیم و تصمیمات آگاهانه بگیریم."
-  },
-  "notifications": {
-    "title": "اعلان‌ها",
-    "newAnalysis": "تحلیل جدید در دسترس است",
-    "signalChange": "تغییر سیگنال شناسایی شد",
-    "clear": "پاک کردن همه"
-  },
-  "performance": {
-    "title": "اطلاعات عملکرد / بک‌تست",
-    "description": "معیارهای عملکرد تاریخی و نتایج شبیه‌سازی‌شده",
-    "accuracy": "دقت سیگنال",
-    "last30Days": "۳۰ روز گذشته",
-    "avgProfit": "میانگین سود",
-    "perSignal": "در هر سیگنال",
-    "totalSignals": "کل سیگنال‌ها",
-    "lastMonth": "ماه گذشته",
-    "winRate": "نرخ موفقیت",
-    "successful": "معاملات موفق",
-    "disclaimer": "اینها نتایج بک‌تست نمونه و صرفاً برای نمایش هستند."
-  },
-  "partners": {
-    "hero": {
-      "title": "برای شرکا و سرمایه‌گذاران",
-      "subtitle": "پلتفرم تحلیل معاملاتی مبتنی بر هوش مصنوعی"
-    },
-    "backToDashboard": "بازگشت به داشبورد",
-    "problem": {
-      "title": "مشکل بازار",
-      "content": "اکثر ابزارهای ترید موجود یا بیش از حد پیچیده‌اند یا تحلیل عمیقی ارائه نمی‌دهند.\n\nتریدرها مجبورند برای بررسی تحلیل تکنیکال، فاندامنتال و اخبار بین چند پلتفرم مختلف جابه‌جا شوند که باعث اتلاف وقت و کاهش دقت می‌شود."
-    },
-    "solution": {
-      "title": "راه‌حل ما",
-      "content": "پلتفرم ما، نکسو ترید، یک سیستم تحلیل هوشمند و ماژولار مبتنی بر هوش مصنوعی است که به‌راحتی در هر وب‌سایتی با ساختار JavaScript قابل ادغام است.\n\nاین پلتفرم ترکیبی از تحلیل احساسی اخبار (AI Sentiment)، تحلیل تکنیکال خودکار و سیگنال نهایی ترکیبی (Signal Aggregator) ارائه می‌دهد.\n\nدر بازارهای مختلف مثل کریپتو، طلا، سهام و فارکس قابل استفاده است و نتایج را با توجه به سبک ترید هر کاربر (کوتاه‌مدت، میان‌مدت، بلندمدت) تنظیم می‌کند."
-    },
-    "outputs": {
-      "title": "نمونه خروجی‌ها",
-      "content": "• سیگنال‌های خرید، فروش یا خنثی با درصد اطمینان\n• تحلیل احساسی و فنی هم‌زمان برای ارزهای مهم\n• نمونه‌هایی از خروجی‌های واقعی یا شبیه‌سازی‌شده\n• تحلیل چند تایم‌فریم با ارزیابی ریسک"
-    },
-    "business": {
-      "title": "مدل درآمدی",
-      "content": "• فروش B2B به صرافی‌ها و پلتفرم‌های مالی (SaaS Licensing)\n• دسترسی API برای استارتاپ‌ها و ربات‌های ترید\n• پلن‌های اشتراکی برای تریدرهای حرفه‌ای\n• راه‌حل‌های White-label برای موسسات مالی"
-    },
-    "roadmap": {
-      "title": "نقشه رشد ۶ ماه آینده",
-      "content": "✅ تکمیل نسخه MVP و تست داخلی\n🔄 اتصال به داده زنده و چارت TradingView\n🤝 همکاری آزمایشی با صرافی‌ها و بروکرها\n🚀 گسترش تحلیل‌ها به بازار طلا و فارکس\n💼 جذب سرمایه برای توسعه فاز دوم"
-    },
-    "cta": {
-      "title": "آماده همکاری با ما هستید؟",
-      "subtitle": "بیایید درباره اینکه نکسو ترید چگونه می‌تواند پلتفرم شما را متحول کند صحبت کنیم",
-      "button": "تماس با ما"
-    }
-  },
-  "auth": {
-    "welcome": "خوش آمدید",
-    "welcomeDescription": "برای دسترسی به داشبورد وارد شوید",
-    "login": "ورود",
-    "signup": "ثبت‌نام",
-    "email": "ایمیل",
-    "password": "رمز عبور",
-    "name": "نام",
-    "confirmPassword": "تایید رمز عبور",
-    "emailPlaceholder": "ایمیل خود را وارد کنید",
-    "passwordPlaceholder": "رمز عبور خود را وارد کنید",
-    "namePlaceholder": "نام خود را وارد کنید",
-    "confirmPasswordPlaceholder": "رمز عبور را تایید کنید",
-    "rememberMe": "مرا به خاطر بسپار",
-    "forgotPassword": "رمز عبور را فراموش کردید؟",
-    "loginSuccess": "ورود موفق!",
-    "welcomeBack": "به نکسو ترید خوش آمدید",
-    "signupSuccess": "حساب ایجاد شد!",
-    "checkEmail": "لطفا ایمیل خود را برای تایید حساب بررسی کنید",
-    "loginError": "ورود ناموفق",
-    "signupError": "ثبت‌نام ناموفق",
-    "validationError": "خطای اعتبارسنجی",
-    "invalidCredentials": "ایمیل یا رمز عبور نامعتبر",
-    "enterEmail": "ایمیل را وارد کنید",
-    "enterEmailFirst": "لطفا ابتدا ایمیل خود را وارد کنید",
-    "resetEmailSent": "ایمیل بازنشانی ارسال شد",
-    "checkEmailReset": "لطفا ایمیل خود را برای دستورالعمل‌های بازنشانی رمز عبور بررسی کنید",
-    "resetError": "بازنشانی ناموفق",
-    "loggingIn": "در حال ورود...",
-    "signingUp": "در حال ایجاد حساب...",
-    "passwordWeak": "رمز عبور ضعیف",
-    "passwordMedium": "قدرت متوسط",
-    "passwordStrong": "رمز عبور قوی",
-    "logout": "خروج",
-    "logoutSuccess": "خروج موفق",
-    "logoutDescription": "منتظر دیدار مجدد شما هستیم!",
-    "logoutError": "خروج ناموفق",
-    "logoutConfirm": "آیا مطمئن هستید که می‌خواهید خارج شوید؟",
-    "logoutMessage": "شما به صفحه ورود هدایت خواهید شد.",
-    "cancel": "لغو"
+  "tradingStyle": {
+    "long": "بلندمدت",
+    "mid": "میان‌مدت",
+    "short": "کوتاه‌مدت"
   },
   "tutorials": {
-    "title": "مرکز آموزش",
-    "subtitle": "آموزش‌های شخصی‌سازی شده بر اساس سطح تجربه شما",
-    "backToDashboard": "بازگشت به داشبورد",
     "all": "همه آموزش‌ها",
-    "videos": "ویدیوها",
     "interactive": "تعاملی",
     "reading": "مطالعه",
-    "start": "شروع آموزش",
     "review": "مرور",
-    "genAlpha": "مناسب مبتدی",
-    "genZ": "سطح متوسط",
-    "genY": "محتوای پیشرفته",
-    "genX": "سطح تخصصی",
+    "start": "شروع آموزش",
+    "startLabel": "شروع",
+    "startPlaceholder": "",
+    "startTitle": "",
+    "subtitle": "آموزش‌های شخصی‌سازی شده بر اساس سطح تجربه شما",
+    "system": {
+      "chart_basics": {
+        "description": "یاد بگیرید چگونه نمودارها را بخوانید و با آن‌ها تعامل کنید",
+        "steps": {
+          "chart": {
+            "content": "نمودارها روند قیمت در طول زمان را نشان می‌دهند. می‌توانید زوم و پان کنید.",
+            "title": "مبانی نمودار"
+          },
+          "indicators": {
+            "content": "رنگ‌ها و خطوط مختلف نشان‌دهنده اندیکاتورهای تکنیکال متفاوتی هستند.",
+            "title": "اندیکاتورها"
+          },
+          "interaction": {
+            "content": "سعی کنید موس را روی نمودار ببرید تا مقادیر دقیق را ببینید!",
+            "title": "تعامل"
+          }
+        },
+        "title": "درک نمودارها"
+      },
+      "dashboard_basics": {
+        "description": "یاد بگیرید چگونه داشبورد کریپتو را مرور کنید",
+        "steps": {
+          "ai_assistant": {
+            "content": "نیاز به کمک دارید؟ هر زمان روی دکمه دستیار هوش مصنوعی کلیک کنید و سؤال بپرسید!",
+            "title": "دستیار هوش مصنوعی"
+          },
+          "coin_cards": {
+            "content": "هر کارت تحلیل احساسی یک ارز دیجیتال را نمایش می‌دهد.",
+            "title": "کارت‌ ارزها"
+          },
+          "market_gauge": {
+            "content": "این شاخص ریسک کلی بازار را نشان می‌دهد. سبز = صعودی، قرمز = نزولی.",
+            "title": "شاخص بازار"
+          },
+          "welcome": {
+            "content": "این داشبورد تحلیل احساسات بازار کریپتو مبتنی بر هوش مصنوعی را نشان می‌دهد. بگذارید دوروبر را نشان بدهم!",
+            "title": "خوش آمدید!"
+          }
+        },
+        "title": "مرور داشبورد"
+      },
+      "signals_explained": {
+        "description": "یاد بگیرید سیگنال‌های خرید/فروش چه معنی‌ای دارند",
+        "steps": {
+          "aggregator": {
+            "content": "این بخش تحلیل بنیادی و تکنیکال را ترکیب می‌کند تا سیگنال‌های واضح ارائه دهد.",
+            "title": "تجمیع سیگنال"
+          },
+          "buy": {
+            "content": "سیگنال‌های سبز شرایط مناسب خرید را نشان می‌دهند.",
+            "title": "سیگنال‌های خرید"
+          },
+          "confidence": {
+            "content": "امتیاز اعتماد نشان می‌دهد چقدر هوش مصنوعی از توصیهٔ خود مطمئن است.",
+            "title": "اعتماد"
+          },
+          "sell": {
+            "content": "سیگنال‌های قرمز ممکن است زمان فروش یا صبر کردن را پیشنهاد دهند.",
+            "title": "سیگنال‌های فروش"
+          }
+        },
+        "title": "درک سیگنال‌ها"
+      }
+    },
+    "title": "مرکز آموزشی",
     "type": {
-      "video": "ویدیو",
       "interactive": "تعاملی",
-      "text": "مطالعه"
+      "text": "مطالعه",
+      "video": "ویدیو"
+    },
+    "ui": {
+      "complete": "اتمام",
+      "completeDesc": "آفرین! شما +۲۰ XP دریافت کردید",
+      "completeTitle": "آموزش تکمیل شد! 🎉",
+      "next": "بعدی",
+      "skip": "رد کردن آموزش",
+      "stepCounter": "مرحله {{current}} از {{total}}",
+      "wasHelpful": "آیا این مفید بود؟",
+      "yes": "بله",
+      "no": "خیر"
+    },
+    "videos": "ویدیوها"
+  },
+  "welcome": {
+    "actions": {
+      "getStarted": "شروع کن",
+      "launchDashboard": "ورود به داشبورد"
+    },
+    "description": "داشبورد شما برای تجربهٔ {{generation}} بهینه‌سازی شده است",
+    "features": {
+      "adaptive": "تجربهٔ تطبیقی",
+      "ai": "تحلیل هوش مصنوعی",
+      "realtime": "سیگنال‌های لحظه‌ای"
+    },
+    "form": {
+      "ageLabel": "سن شما",
+      "agePlaceholder": "۲۵",
+      "genderLabel": "جنسیت (اختیاری)",
+      "genderOptions": {
+        "female": "زن",
+        "male": "مرد",
+        "other": "دیگر",
+        "preferNot": "ترجیح می‌دهم نگوییم"
+      },
+      "nameLabel": "چه اسمی برای شما بگذاریم؟ ✨",
+      "namePlaceholder": "نام دلخواه شما",
+      "personality": {
+        "analyst": "🔍 تحلیل‌گر — داده‌ها و جزئیات زیاد",
+        "casual": "✨ ساده و واضح",
+        "expert": "⚡ حرفه‌ای — کنترل کامل",
+        "learner": "📚 یادگیرنده — راهنمایی‌شده"
+      },
+      "personalityLabel": "سبک تعامل شما",
+      "selectPlaceholder": "انتخاب کنید",
+      "tradingExperienceLabel": "تجربهٔ معاملاتی",
+      "experience": {
+        "advanced": "🚀 معامله‌گر حرفه‌ای",
+        "beginner": "🌱 تازه‌کار",
+        "intermediate": "📈 تا حدودی تجربه دارم"
+      }
+    },
+    "generations": {
+      "genAlpha": "نسل آلفا",
+      "genG": "",
+      "genX": "نسل ایکس",
+      "genY": "نسل وای (نسل هزاره)",
+      "genZ": "نسل زد",
+      "unknown": "نسلتان"
+    },
+    "greetings": {
+      "default": "خوش‌آمدی دوباره، {{name}}! 👋",
+      "genAlpha": "سلام {{name}}! 🎨",
+      "genZ": "یو {{name}}! 👋"
+    },
+    "steps": {
+      "profile": {
+        "subtitle": "ما همه‌چیز را بر اساس نیازهای شما تنظیم می‌کنیم",
+        "title": "بیایید تجربهٔ شما را شخصی‌سازی کنیم"
+      },
+      "welcome": {
+        "subtitle": "بینش‌های مبتنی بر هوش مصنوعی، مطابق سبک شما",
+        "title": "به آینده ترید خوش آمدید"
+      }
+    },
+    "toast": {
+      "authIssueDesc": "لطفاً دوباره وارد شوید.",
+      "authIssueTitle": "مشکل احراز هویت",
+      "backendSlowDesc": "به‌صورت محلی ذخیره شد — ادامه به داشبورد.",
+      "backendSlowTitle": "سرور کند یا آفلاین است",
+      "errorDesc": "ذخیرهٔ پروفایل ناموفق بود. ادامه به داشبورد...",
+      "errorTitle": "خطا",
+      "profileCreatedDesc": "داشبورد تطبیقی شما آماده است!",
+      "profileCreatedTitle": "پروفایل ساخته شد! 🎉",
+      "profileSaveTimeoutDesc": "ادامه به‌صورت محلی.",
+      "profileSaveTimeoutTitle": "ذخیرهٔ پروفایل زمان‌بر شد",
+      "profileSaveWarningDesc": "امکان ذخیرهٔ پروفایل روی سرور نیست. ادامه می‌دهیم.",
+      "profileSaveWarningTitle": "هشدار"
+    },
+    "validation": {
+      "invalidAge": "لطفاً یک سن معتبر وارد کنید",
+      "nameRequired": "لطفاً نام خود را وارد کنید"
     }
-  }
+  },
+  "languageSwitcher": {
+    "toggle": "تغییر زبان",
+    "english": "English",
+    "persian": "فارسی"
+  },
+  "aggregator": {
+  "title": "تجمیع سیگنال‌ها",
+  "weights": "وزن‌ها",
+  "adjustWeights": "تنظیم وزن سیگنال‌ها",
+  "weightsManaged": "وزن‌ها در تنظیمات پروفایل معامله‌گر شما مدیریت می‌شوند.",
+  "fundamentalWeight": "وزن فاندامنتال",
+  "technicalWeight": "وزن تکنیکال",
+  "exportCsv": "صادرات CSV",
+  "exportJson": "صادرات JSON",
+  "combinedScores": "امتیازهای ترکیبی",
+  "finalScore": "امتیاز نهایی",
+  "confidence": "اعتماد",
+  "signalBreakdown": "بخش‌بندی سیگنال",
+  "finalScoreShort": "امتیاز",
+  "enhancedTitle": "تجمیع سیگنال‌های پیشرفته",
+  "enhancedSubtitle": "ترکیب تحلیل تکنیکال و احساس بازار",
+  "mode": {
+    "combined": "ترکیبی",
+    "technical": "تکنیکال",
+    "news": "اخبار"
+  },
+  "overallTitle": "سیگنال کلی بازار",
+  "overallDesc": {
+    "combined": "بر اساس تحلیل تکنیکال و اخبار",
+    "technical": "بر اساس اندیکاتورهای تکنیکال",
+    "news": "بر اساس احساس اخبار"
+  },
+  "confidenceLabel": "اعتماد: {{percent}}%",
+  "titles": {
+    "combined": "قدرت سیگنال ترکیبی",
+    "technical": "قدرت سیگنال تکنیکال",
+    "news": "قدرت احساس اخبار"
+  },
+  "signalStrength": "قدرت سیگنال",
+  "signalSources": "منابع سیگنال"
+},
+"news": {
+  "title": "مرکز تحلیل اخبار",
+  "analyzeSelected": "تحلیل موارد انتخاب‌شده ({{count}})",
+  "analysisModalTitle": "تحلیل اخبار توسط هوش مصنوعی",
+  "analysisLoading": "در حال تولید تحلیل...",
+  "analysisFallback": "در حال حاضر امکان تولید تحلیل وجود ندارد.",
+  "analysisError": "متاسفیم، امکان تحلیل اخبار فعلاً میسر نیست. لطفاً بعداً تلاش کنید.",
+  "toasts": {
+    "noSelected": {
+      "title": "هیچ خبری انتخاب نشده",
+      "description": "لطفاً حداقل یک خبر را برای تحلیل انتخاب کنید"
+    },
+    "analysisFailed": {
+      "title": "تحلیل ناموفق",
+      "description": "اتصال به سرویس هوش مصنوعی برقرار نشد"
+    }
+  },
+  "categories": {
+    "crypto": "کریپتو",
+    "gold": "طلا",
+    "stocks": "سهام",
+    "economy": "اقتصاد"
+  },
+  "sentiment": {
+    "positive": "مثبت",
+    "negative": "منفی",
+    "neutral": "خنثی"
+  },
+  "impactLevels": {
+    "high": "بالا",
+    "medium": "متوسط",
+    "low": "کم"
+  },
+  "impactSuffix": "تأثیر"
+},
+
+"refresh": {
+  "button": "بروزرسانی",
+  "buttonAria": "به‌روزرسانی داده‌های داشبورد",
+  "selectPlaceholder": "بروزرسانی خودکار",
+  "selectAria": "فاصله بروزرسانی خودکار",
+  "options": {
+    "off": "خاموش",
+    "5": "۵ دقیقه",
+    "15": "۱۵ دقیقه",
+    "60": "۶۰ دقیقه"
+  },
+  "updated": "بروزرسانی: {{time}}",
+  "next": "بعدی: {{time}}"
+},
+"reports": {
+  "panelTitle": "گزارش‌های تحلیل هوش مصنوعی",
+  "copy": "کپی",
+  "download": "دانلود",
+  "copyAria": "کپی گزارش کامل در حافظه",
+  "downloadAria": "دانلود گزارش کامل",
+  "copySuccessTitle": "کپی شد",
+  "copySuccessDesc": "گزارش کامل با موفقیت کپی شد",
+  "downloadSuccessTitle": "دانلود شروع شد",
+  "downloadSuccessDesc": "دانلود گزارش آغاز شد",
+  "filenamePrefix": "گزارش-احساس-بازار",
+  "reportTitle": "گزارش تحلیل هوش مصنوعی — کریپتو سنتیمنت پرو",
+  "generated": "تولید شده",
+  "articlesAnalyzed": "مقالات تحلیل‌شده",
+  "marketSummaryHeader": "خلاصهٔ بازار",
+  "individualCoinHeader": "تحلیل هر ارز",
+  "sentiment": "احساس بازار",
+  "score": "امتیاز",
+  "confidence": "اطمینان",
+  "evidenceSources": "منابع شواهد",
+  "analysis": "تحلیل",
+  "keySources": "منابع کلیدی",
+  "technicalHeader": "شاخص‌های تکنیکال",
+  "rsi": "RSI",
+  "macdSignal": "سیگنال MACD",
+  "shortMA": "مووینگ‌ایمپ ساده کوتاه",
+  "longMA": "مووینگ‌ایمپ ساده بلند",
+  "volatility": "نوسان",
+  "technicalScore": "امتیاز تکنیکال",
+  "currencyPrefix": "$",
+  "endOfReport": "پایان گزارش",
+  "reportDate": "تاریخ گزارش",
+  "coinsTracked": "ارزهای رصدشده",
+  "marketSummary": "خلاصهٔ بازار",
+  "detailedAnalysis": "تحلیل تفصیلی"
+},
+"technical": {
+  "panelTitle": "تحلیل تکنیکال",
+    "taScoreLabel": "امتیاز TA",
+    "rsi": "RSI",
+    "rsiStatus": {
+      "overbought": "بیش‌خرید",
+      "oversold": "بیش‌فروش",
+      "neutral": "خنثی"
+    },
+    "macdSignal": "سیگنال MACD",
+    "macdBullish": "صعودی",
+    "macdBearish": "نزولی",
+    "volatility": "نوسان",
+    "movingAverages": "میانگین‌های متحرک",
+    "shortMA": "میانگین کوتاه",
+    "longMA": "میانگین بلند",
+    "keyLevels": "سطوح کلیدی",
+    "support": "حمایت",
+    "resistance": "مقاومت",
+    "taHistoryTitle": "تاریخچه امتیاز TA",
+  "title": "منطقه تحلیل تکنیکال",
+  "drawingTools": "ابزارهای رسم:",
+  "indicators": "اندیکاتورها:",
+  "tools": {
+    "trendline": "خط روند",
+    "fibonacci": "فیبوناچی",
+    "support": "حمایت",
+    "resistance": "مقاومت"
+  },
+  "saveAnalysis": "ذخیره تحلیل",
+  "analysisSavedTitle": "تحلیل ذخیره شد",
+  "analysisSavedDesc": "تحلیل چارت {{coin}} با موفقیت ذخیره شد",
+  "aiInterpretationButton": "تفسیر تکنیکال با هوش مصنوعی",
+  "aiDialogTitle": "تحلیل چارت با هوش مصنوعی",
+  "analyzing": "در حال تحلیل...",
+  "analyzingPatterns": "در حال تحلیل الگوهای چارت...",
+  "analysisFallback": "در حال حاضر امکان تولید تحلیل وجود ندارد.",
+  "analysisErrorFallback": "متاسفیم، در حال حاضر قادر به تحلیل چارت نیستم. لطفاً بعداً تلاش کنید.",
+  "analysisFailedTitle": "تحلیل ناموفق",
+  "analysisFailedDesc": "اتصال به سرویس هوش مصنوعی برقرار نشد",
+  "exportChart": "صادرات چارت",
+  "savedAnalysesTitle": "تحلیل‌های ذخیره‌شده"
+}
 }

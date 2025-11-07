@@ -1,0 +1,52 @@
+/* src/styles/fonts.css
+   Simpler version: no @layer base so Tailwind postcss error disappears.
+   Put Estedad-Regular.woff2 & Estedad-Bold.woff2 in /public/fonts/
+*/
+
+/* 1) @font-face */
+@font-face {
+  font-family: "Estedad";
+  src: url("/fonts/Estedad-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+@font-face {
+  font-family: "Estedad";
+  src: url("/fonts/Estedad-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+/* 2) Global rule: وقتی صفحه فارسیه، کل سند Estedad استفاده کنه
+   (بدون استفاده از @layer) */
+html[lang="fa"] {
+  font-family: "Estedad", Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* make sure body inherits */
+html[lang="fa"] body {
+  font-family: inherit;
+}
+
+/* 3) Utility classes برای اورراید محلی */
+.font-estedad {
+  font-family: "Estedad", Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
+}
+
+.font-sans-override {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
+}
+
+/* 4) Helper برای بلاک‌های جهت مخالف داخل صفحات فارسی */
+.farsi-ltr { direction: ltr; unicode-bidi: isolate; }
+.farsi-rtl { direction: rtl; unicode-bidi: isolate; }

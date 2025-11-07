@@ -1,3 +1,4 @@
+// src/components/NewsAnalysisSection.tsx
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Sparkles, ExternalLink, TrendingUp, TrendingDown, Newspaper } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 type NewsCategory = "Crypto" | "Gold" | "Stocks" | "Economy";
 
@@ -32,6 +34,7 @@ interface NewsItem {
 }
 
 export function NewsAnalysisSection() {
+  const { t, i18n } = useTranslation();
   const [selectedNews, setSelectedNews] = useState<Set<string>>(new Set());
   const [showAIAnalysis, setShowAIAnalysis] = useState(false);
   const [aiAnalysisResult, setAiAnalysisResult] = useState("");
@@ -102,7 +105,7 @@ export function NewsAnalysisSection() {
     },
   ];
 
-  const filteredNews = newsData.filter(news => news.category === activeCategory);
+  const filteredNews = newsData.filter((news) => news.category === activeCategory);
 
   const toggleNewsSelection = (newsId: string) => {
     const newSelection = new Set(selectedNews);
@@ -117,8 +120,8 @@ export function NewsAnalysisSection() {
   const handleAnalyzeSelected = async () => {
     if (selectedNews.size === 0) {
       toast({
-        title: "No news selected",
-        description: "Please select at least one news item to analyze",
+        title: t("news.toasts.noSelected.title"),
+        description: t("news.toasts.noSelected.description"),
         variant: "destructive",
       });
       return;
@@ -129,18 +132,22 @@ export function NewsAnalysisSection() {
 
     try {
       const { supabase } = await import("@/integrations/supabase/client");
-      
-      const selectedItems = newsData.filter(news => selectedNews.has(news.id));
-      
+
+      const selectedItems = newsData.filter((news) => selectedNews.has(news.id));
+
       const analysisPrompt = `Analyze these ${selectedItems.length} news items together and provide a comprehensive market analysis:
 
-${selectedItems.map((item, idx) => `
+${selectedItems
+  .map(
+    (item, idx) => `
 ${idx + 1}. ${item.title}
    Category: ${item.category}
    Summary: ${item.summary}
    Sentiment: ${item.sentiment}
    Impact: ${item.impact}
-`).join('\n')}
+`
+  )
+  .join("\n")}
 
 Provide:
 1. Overall market sentiment analysis
@@ -152,23 +159,23 @@ Provide:
 
 Be detailed and actionable with specific entry/exit recommendations.`;
 
-      const { data, error } = await supabase.functions.invoke('ai-chat', {
+      const { data, error } = await supabase.functions.invoke("ai-chat", {
         body: {
           messages: [{ role: "user", content: analysisPrompt }],
-          type: "news"
-        }
+          type: "news",
+        },
       });
 
       if (error) throw error;
 
-      setAiAnalysisResult(data.response || "Unable to generate analysis at this time.");
+      setAiAnalysisResult(data.response || t("news.analysisFallback"));
     } catch (error) {
-      console.error('Multi-news analysis error:', error);
-      setAiAnalysisResult("Sorry, I couldn't analyze the selected news items right now. Please try again.");
+      console.error("Multi-news analysis error:", error);
+      setAiAnalysisResult(t("news.analysisError"));
       toast({
-        title: "Analysis Failed",
-        description: "Unable to connect to AI service",
-        variant: "destructive"
+        title: t("news.toasts.analysisFailed.title"),
+        description: t("news.toasts.analysisFailed.description"),
+        variant: "destructive",
       });
     }
   };
@@ -179,7 +186,7 @@ Be detailed and actionable with specific entry/exit recommendations.`;
 
     try {
       const { supabase } = await import("@/integrations/supabase/client");
-      
+
       const analysisPrompt = `Analyze this ${newsItem.category} news item and provide detailed market impact analysis:
 
 Title: ${newsItem.title}
@@ -197,23 +204,23 @@ Provide:
 
 Be specific and actionable.`;
 
-      const { data, error } = await supabase.functions.invoke('ai-chat', {
+      const { data, error } = await supabase.functions.invoke("ai-chat", {
         body: {
           messages: [{ role: "user", content: analysisPrompt }],
-          type: "news"
-        }
+          type: "news",
+        },
       });
 
       if (error) throw error;
 
-      setAiAnalysisResult(data.response || "Unable to generate analysis at this time.");
+      setAiAnalysisResult(data.response || t("news.analysisFallback"));
     } catch (error) {
-      console.error('News analysis error:', error);
-      setAiAnalysisResult("Sorry, I couldn't analyze this news item right now. Please try again.");
+      console.error("News analysis error:", error);
+      setAiAnalysisResult(t("news.analysisError"));
       toast({
-        title: "Analysis Failed",
-        description: "Unable to connect to AI service",
-        variant: "destructive"
+        title: t("news.toasts.analysisFailed.title"),
+        description: t("news.toasts.analysisFailed.description"),
+        variant: "destructive",
       });
     }
   };
@@ -224,54 +231,52 @@ Be specific and actionable.`;
     return <Newspaper className="w-4 h-4 text-neutral" />;
   };
 
-  const getImpactColor = (impact: string) => {
+  const getImpactClass = (impact: string) => {
     if (impact === "high") return "border-negative text-negative";
     if (impact === "medium") return "border-primary text-primary";
     return "border-muted text-muted-foreground";
   };
 
+  // format time according to i18n.language
+  const formatTime = (d: Date) =>
+    d.toLocaleTimeString(i18n.language, { hour: "2-digit", minute: "2-digit" });
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">News Analysis Center</h2>
-        <Button
-          onClick={handleAnalyzeSelected}
-          disabled={selectedNews.size === 0}
-          className="gap-2"
-        >
+        <h2 className="text-2xl font-bold">{t("news.title")}</h2>
+        <Button onClick={handleAnalyzeSelected} disabled={selectedNews.size === 0} className="gap-2">
           <Sparkles className="w-4 h-4" />
-          Analyze Selected ({selectedNews.size})
+          {/* keep count visible inside text for parity with original */}
+          {t("news.analyzeSelected", { count: selectedNews.size })}
         </Button>
       </div>
 
       <Tabs value={activeCategory} onValueChange={(v) => setActiveCategory(v as NewsCategory)}>
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="Crypto">Crypto</TabsTrigger>
-          <TabsTrigger value="Gold">Gold</TabsTrigger>
-          <TabsTrigger value="Stocks">Stocks</TabsTrigger>
-          <TabsTrigger value="Economy">Economy</TabsTrigger>
+          <TabsTrigger value="Crypto">{t("news.categories.crypto")}</TabsTrigger>
+          <TabsTrigger value="Gold">{t("news.categories.gold")}</TabsTrigger>
+          <TabsTrigger value="Stocks">{t("news.categories.stocks")}</TabsTrigger>
+          <TabsTrigger value="Economy">{t("news.categories.economy")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value={activeCategory} className="space-y-4 mt-6">
           {filteredNews.map((news) => (
-            <Card
-              key={news.id}
-              className="glass-card p-6 hover:scale-[1.01] transition-all cursor-pointer"
-            >
+            <Card key={news.id} className="glass-card p-6 hover:scale-[1.01] transition-all cursor-pointer">
               <div className="flex items-start gap-4">
                 <Checkbox
                   checked={selectedNews.has(news.id)}
                   onCheckedChange={() => toggleNewsSelection(news.id)}
                   className="mt-1"
                 />
-                
+
                 <div className="flex-1 space-y-3">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg mb-2">{news.title}</h3>
                       <p className="text-sm text-muted-foreground">{news.summary}</p>
                     </div>
-                    
+
                     <Button
                       variant="ghost"
                       size="sm"
@@ -288,20 +293,16 @@ Be specific and actionable.`;
                   <div className="flex items-center gap-3 flex-wrap">
                     <div className="flex items-center gap-1">
                       {getSentimentIcon(news.sentiment)}
-                      <span className="text-xs capitalize">{news.sentiment}</span>
+                      <span className="text-xs capitalize">{t(`news.sentiment.${news.sentiment}`)}</span>
                     </div>
-                    
-                    <Badge variant="outline" className={getImpactColor(news.impact)}>
-                      {news.impact} impact
+
+                    <Badge variant="outline" className={getImpactClass(news.impact)}>
+                      {t(`news.impactLevels.${news.impact}`)} {t("news.impactSuffix")}
                     </Badge>
 
-                    <Badge variant="outline">
-                      {news.category}
-                    </Badge>
+                    <Badge variant="outline">{t(`news.categories.${news.category.toLowerCase()}`)}</Badge>
 
-                    <span className="text-xs text-muted-foreground ml-auto">
-                      {news.timestamp.toLocaleTimeString()}
-                    </span>
+                    <span className="text-xs text-muted-foreground ml-auto">{formatTime(news.timestamp)}</span>
 
                     <a
                       href={news.url}
@@ -310,7 +311,7 @@ Be specific and actionable.`;
                       className="text-xs text-primary hover:underline flex items-center gap-1"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      Read more <ExternalLink className="w-3 h-3" />
+                      {t("common.readMore")} <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
                 </div>
@@ -325,12 +326,12 @@ Be specific and actionable.`;
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-primary" />
-              AI News Analysis
+              {t("news.analysisModalTitle")}
             </DialogTitle>
           </DialogHeader>
           <div className="mt-4">
             <div className="p-4 bg-card/50 rounded-lg whitespace-pre-line text-sm font-mono">
-              {aiAnalysisResult}
+              {aiAnalysisResult || t("news.analysisLoading")}
             </div>
           </div>
         </DialogContent>

@@ -24,8 +24,8 @@ export function TraderProfilePanel() {
   const handleSave = () => {
     updateProfile({ weights: tempWeights });
     toast({
-      title: "Preferences Saved",
-      description: "Your trading preferences have been updated",
+      title: t("profile.toast.savedTitle"),
+      description: t("profile.toast.savedDesc"),
     });
   };
 
@@ -43,7 +43,7 @@ export function TraderProfilePanel() {
             {t("profile.title")}
           </SheetTitle>
           <SheetDescription>
-            Customize your trading experience
+            {t("profile.sheetDescription")}
           </SheetDescription>
         </SheetHeader>
 

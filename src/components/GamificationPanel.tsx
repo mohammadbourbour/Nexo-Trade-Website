@@ -1,3 +1,4 @@
+// src/components/GamificationPanel.tsx
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Trophy, Award, Coins, Star, TrendingUp, Shield } from "lucide-react";
@@ -50,7 +51,7 @@ export function GamificationPanel() {
             {t("gamification.leaderboard")}
           </SheetTitle>
           <SheetDescription>
-            Track your progress and compete with other traders
+            {t("gamification.sheetDescription")}
           </SheetDescription>
         </SheetHeader>
 
@@ -69,7 +70,7 @@ export function GamificationPanel() {
           
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Level Progress</span>
+              <span>{t("gamification.levelProgress")}</span>
               <span className="text-primary font-bold">
                 {Math.floor((profile.xp % 1000) / 10)}%
               </span>
@@ -121,7 +122,7 @@ export function GamificationPanel() {
         <div className="mt-6">
           <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
-            Top Traders
+            {t("gamification.topTraders")}
           </h3>
           <div className="space-y-2">
             {LEADERBOARD_DATA.map((trader, index) => (
@@ -153,13 +154,13 @@ export function GamificationPanel() {
                   <div>
                     <p className="font-medium">{trader.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {trader.accuracy}% accuracy
+                      {t("gamification.accuracyLabel", { percent: trader.accuracy })}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-primary">{trader.xp.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground">XP</p>
+                  <p className="text-xs text-muted-foreground">{t("gamification.xp")}</p>
                 </div>
               </motion.div>
             ))}

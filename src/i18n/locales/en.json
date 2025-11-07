@@ -1,194 +1,641 @@
 {
+  "adaptiveCoin": {
+    "analysis": "Analysis",
+    "confidence": "Confidence",
+    "evidenceSources": "Evidence Sources",
+    "hintCareful": "Be careful!",
+    "hintGood": "Good signs!",
+    "hintMixed": "Mixed signals",
+    "score": "Score",
+    "sentimentBadgeAria": "{{sentiment}} sentiment",
+    "sentimentScore": "Sentiment Score",
+    "why": "Why?"
+  },
+  "achievement": {
+    "levelUp": {
+      "description": "You've reached level {{level}}!",
+      "title": "Level Up!"
+    }
+  },
+  "achievements": {
+    "unlocked": "Achievement Unlocked!"
+  },
+  "ai": {
+    "assistant": "AI Assistant",
+    "assistantDescription": "Your expert trading advisor powered by AI",
+    "askQuestion": "Ask me anything about signals, indicators, or risk management...",
+    "errorConnection": "Sorry, I'm experiencing connection issues. Please try again in a moment.",
+    "errorProcessing": "I'm having trouble processing your request right now. Please try again.",
+    "genGWelcome": "",
+    "genXWelcome": "Welcome! Let's analyze the markets together and make informed decisions.",
+    "genZWelcome": "Hey! 👋 Ready to level up your trading game? Let's make some moves! 🚀",
+    "send": "Send",
+    "thinking": "Thinking..."
+  },
+  "auth": {
+    "cancel": "Cancel",
+    "checkEmail": "Please check your email to verify your account",
+    "checkEmailReset": "Please check your email for password reset instructions",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "enterEmail": "Enter email",
+    "enterEmailFirst": "Please enter your email first",
+    "forgotPassword": "Forgot password?",
+    "invalidCredentials": "Invalid email or password",
+    "login": "Login",
+    "loginError": "Login failed",
+    "loginSuccess": "Login successful!",
+    "loggingIn": "Logging in...",
+    "logout": "Logout",
+    "logoutConfirm": "Are you sure you want to logout?",
+    "logoutDescription": "See you next time!",
+    "logoutError": "Logout failed",
+    "logoutMessage": "You will be redirected to the login page.",
+    "logoutSuccess": "Logged out successfully",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "passwordMedium": "Medium strength",
+    "passwordStrong": "Strong password",
+    "passwordWeak": "Weak password",
+    "resetEmailSent": "Reset email sent",
+    "resetError": "Reset failed",
+    "signingUp": "Creating account...",
+    "signup": "Sign Up",
+    "signupError": "Signup failed",
+    "signupSuccess": "Account created!",
+    "welcome": "Welcome",
+    "welcomeBack": "Welcome back to Nexo-Trade",
+    "welcomeDescription": "Sign in to access your trading dashboard",
+    "rememberMe": "Remember Me"
+  },
+  "category": {
+    "ai": {
+      "subtitle": "Fully analyzed by artificial intelligence",
+      "title": "AI-Driven Analytics"
+    },
+    "user": {
+      "subtitle": "Personalized based on your preferences and inputs",
+      "title": "User-Adaptive Analytics"
+    }
+  },
+  "coin": {
+    "labels": {
+      "analysis": "Analysis",
+      "confidence": "Confidence",
+      "evidenceSources": "Evidence Sources",
+      "score": "Score",
+      "sentimentScore": "Sentiment Score",
+      "why": "Why?",
+      "evidenceSourcesCount": "{{count}} sources"
+    },
+    "names": {
+    "BTC": "Bitcoin",
+    "ETH": "Ethereum",
+    "XRP": "Ripple",
+    "SOL": "Solana",
+    "DOGE": "Dogecoin"
+  },
+  "logoAlt": "{{coin}} logo",
+  "detailsTitle": "{{coin}} Detailed Analysis",
+  "topSources": "Top Sources",
+  "historicalTrend": "Historical Trend",
+  "sentiment": {
+    "positive": "Positive",
+    "neutral": "Neutral",
+    "negative": "Negative"
+  }
+
+  },
+  
+
+    "notes": {
+      "beCareful": "Be careful!",
+      "goodSigns": "Good signs!",
+      "mixedSignals": "Mixed signals"
+    },
+    "negative": "Negative",
+    "neutral": "Neutral",
+    "positive": "Positive",
+    "confidence": "Confidence",
+    "score": "Score",
+    "viewDetails": "View Details",
+
+  "common": {
+    "readMore": "Read more",
+    "close": "Close"
+  },
   "dashboard": {
-    "title": "Nexo-Trade",
-    "subtitle": "AI-Powered Trading Analytics",
+    "autoRefresh": "Auto Refresh",
+    "backendUnreachable": {
+      "description": "Showing cached data or mock content. Full features may be limited.",
+      "title": "Backend unreachable"
+    },
+    "cachedData": {
+      "description": "Could not fetch live data, showing cached version",
+      "title": "Using cached data"
+    },
+    "dataRefreshed": {
+      "description": "Latest market data loaded successfully",
+      "title": "Data refreshed"
+    },
+    "errorLoading": {
+      "description": "Please check your connection and try again",
+      "title": "Error loading data"
+    },
     "lastUpdate": "Last Update",
+    "loading": "Loading dashboard...",
     "nextUpdate": "Next Update",
     "refresh": "Refresh",
-    "autoRefresh": "Auto Refresh"
+    "subtitle": "AI-Powered Trading Analytics",
+    "title": "Nexo-Trade"
   },
-  "tradingStyle": {
-    "short": "Short-term",
-    "mid": "Mid-term",
-    "long": "Long-term"
+  "gamification": {
+    "accuracyStreak": "Accuracy Streak",
+    "achievements": "Achievements",
+    "badges": "Badges",
+    "coins": "Coins",
+    "leaderboard": "Leaderboard",
+    "topAnalyst": "Top 1% Analyst",
+    "xp": "XP",
+    "yourRank": "Your Rank",
+    "riskMaster": "Risk Master",
+    "sheetDescription": "Track your progress and compete with other traders",
+    "levelProgress": "Level Progress",
+    "topTraders": "Top Traders",
+    "accuracyLabel": "{{percent}}% accuracy"
   },
-  "tabs": {
-    "combined": "Combined",
-    "fundamental": "Fundamental",
-    "technical": "Technical",
-    "user-technical": "Chart Analysis",
-    "news-analysis": "News Analysis",
-    "signal-aggregator": "Signal Aggregator",
-    "reports": "Reports"
+  "global": {
+    "isRTL": "false"
   },
   "market": {
     "overview": "Market Overview",
     "riskIndex": "Risk Index",
     "verdict": {
+      "bearish": "Bearish",
       "bullish": "Bullish",
-      "neutral": "Neutral",
-      "bearish": "Bearish"
-    }
-  },
-  "coin": {
-    "score": "Score",
-    "confidence": "Confidence",
-    "viewDetails": "View Details",
-    "sentiment": {
-      "positive": "Positive",
-      "neutral": "Neutral",
-      "negative": "Negative"
-    }
-  },
-  "signals": {
-    "buy": "BUY",
-    "sell": "SELL",
-    "hold": "HOLD",
-    "finalScore": "Final Score",
-    "finalConfidence": "Final Confidence",
-    "decision": "Decision"
-  },
-  "profile": {
-    "title": "Trader Profile",
-    "tradingStyle": "Trading Style",
-    "riskTolerance": "Risk Tolerance",
+      "neutral": "Neutral"
+    },
+    "riskIndexLabel": "Market Risk Index",
+  "summaryTitle": "AI Market Summary",
+  "overallLabel": "Overall Market:",
+  "riskLevels": {
     "low": "Low",
-    "medium": "Medium",
-    "high": "High",
-    "weights": "Indicator Weights",
-    "fundamental": "Fundamental",
-    "technical": "Technical",
-    "savePreferences": "Save Preferences"
+    "moderate": "Moderate",
+    "high": "High"
   },
-  "gamification": {
-    "leaderboard": "Leaderboard",
-    "yourRank": "Your Rank",
-    "xp": "XP",
-    "coins": "Coins",
-    "badges": "Badges",
-    "achievements": "Achievements",
-    "topAnalyst": "Top 1% Analyst",
-    "riskMaster": "Risk Master",
-    "accuracyStreak": "Accuracy Streak"
+  "riskSuffix": "Risk"
   },
-  "ai": {
-    "assistant": "AI Assistant",
-    "askQuestion": "Ask me anything about signals, indicators, or risk management...",
-    "send": "Send",
-    "thinking": "Thinking...",
-    "genZWelcome": "Hey! 👋 Ready to level up your trading game? Let's make some moves! 🚀",
-    "genXWelcome": "Welcome! Let's analyze the markets together and make informed decisions."
+  "navigation": {
+    "categories": {
+      "ai": "AI-Driven Analytics",
+      "ai_short": "AI",
+      "user": "User-Adaptive Analytics",
+      "user_short": "User"
+    }
   },
   "notifications": {
-    "title": "Notifications",
+    "clear": "Clear All",
+    "noNotifications": "No notifications",
     "newAnalysis": "New analysis available",
+    "sheetDescription": "Stay updated with latest signals and analysis",
     "signalChange": "Signal change detected",
-    "clear": "Clear All"
-  },
-  "performance": {
-    "title": "Performance / Backtest Info",
-    "description": "Historical performance metrics and simulated results",
-    "accuracy": "Signal Accuracy",
-    "last30Days": "Last 30 days",
-    "avgProfit": "Average Profit",
-    "perSignal": "Per signal",
-    "totalSignals": "Total Signals",
-    "lastMonth": "Last month",
-    "winRate": "Win Rate",
-    "successful": "Successful trades",
-    "disclaimer": "These are sample backtest results for demonstration purposes only."
+    "title": "Notifications"
   },
   "partners": {
-    "hero": {
-      "title": "For Partners & Investors",
-      "subtitle": "AI-Powered Trading Analytics Platform"
-    },
     "backToDashboard": "Back to Dashboard",
-    "problem": {
-      "title": "Market Problem",
-      "content": "Most existing trading tools are either overly complex or limited in analytical depth.\n\nTraders are forced to switch between multiple platforms to gather technical, fundamental, and sentiment data — wasting time and reducing accuracy."
-    },
-    "solution": {
-      "title": "Our Solution",
-      "content": "Our platform, Nexo-Trade, is a modular AI-powered analytics system that integrates seamlessly into any JavaScript-based website.\n\nIt combines AI sentiment analysis, automated technical insights, and a signal aggregator for unified, actionable intelligence.\n\nThe system adapts to different markets — crypto, gold, stocks, and forex — and aligns its signals with the trader's preferred style (short-, mid-, or long-term)."
-    },
-    "outputs": {
-      "title": "Sample Outputs",
-      "content": "• BUY / SELL / NEUTRAL signals with confidence levels\n• Combined AI-driven insights for top assets\n• Real or simulated examples of platform outputs\n• Multi-timeframe analysis with risk assessment"
-    },
     "business": {
-      "title": "Business Model",
-      "content": "• B2B SaaS licensing for exchanges and trading platforms\n• API access for startups and AI bots (Telegram, Discord)\n• Subscription plans for pro traders\n• White-label solutions for financial institutions"
-    },
-    "roadmap": {
-      "title": "Growth Roadmap (Next 6 Months)",
-      "content": "✅ Finalize MVP & internal testing\n🔄 Integrate live market data and TradingView charts\n🤝 Pilot partnerships with exchanges & brokers\n🚀 Expand coverage to gold and forex markets\n💼 Secure funding for Phase II scaling"
+      "content": "• B2B SaaS licensing for exchanges and trading platforms\n• API access for startups and AI bots (Telegram, Discord)\n• Subscription plans for pro traders\n• White-label solutions for financial institutions",
+      "title": "Business Model"
     },
     "cta": {
-      "title": "Ready to Partner with Us?",
+      "button": "Contact Us",
       "subtitle": "Let's discuss how Nexo-Trade can transform your trading platform",
-      "button": "Contact Us"
+      "title": "Ready to Partner with Us?"
+    },
+    "hero": {
+      "subtitle": "AI-Powered Trading Analytics Platform",
+      "title": "For Partners & Investors"
+    },
+    "outputs": {
+      "content": "• BUY / SELL / NEUTRAL signals with confidence levels\n• Combined AI-driven insights for top assets\n• Real or simulated examples of platform outputs\n• Multi-timeframe analysis with risk assessment",
+      "title": "Sample Outputs"
+    },
+    "problem": {
+      "content": "Most existing trading tools are either overly complex or limited in analytical depth.\n\nTraders are forced to switch between multiple platforms to gather technical, fundamental, and sentiment data — wasting time and reducing accuracy.",
+      "title": "Market Problem"
+    },
+    "roadmap": {
+      "content": "✅ Finalize MVP & internal testing\n🔄 Integrate live market data and TradingView charts\n🤝 Pilot partnerships with exchanges & brokers\n🚀 Expand coverage to gold and forex markets\n💼 Secure funding for Phase II scaling",
+      "title": "Growth Roadmap (Next 6 Months)"
+    },
+    "solution": {
+      "content": "Our platform, Nexo-Trade, is a modular AI-powered analytics system that integrates seamlessly into any JavaScript-based website.\n\nIt combines AI sentiment analysis, automated technical insights, and a signal aggregator for unified, actionable intelligence.\n\nThe system adapts to different markets — crypto, gold, stocks, and forex — and aligns its signals with the trader's preferred style (short-, mid-, or long-term).",
+      "title": "Our Solution"
     }
   },
-  "auth": {
-    "welcome": "Welcome",
-    "welcomeDescription": "Sign in to access your trading dashboard",
-    "login": "Login",
-    "signup": "Sign Up",
-    "email": "Email",
-    "password": "Password",
-    "name": "Name",
-    "confirmPassword": "Confirm Password",
-    "emailPlaceholder": "Enter your email",
-    "passwordPlaceholder": "Enter your password",
-    "namePlaceholder": "Enter your name",
-    "confirmPasswordPlaceholder": "Confirm your password",
-    "rememberMe": "Remember me",
-    "forgotPassword": "Forgot password?",
-    "loginSuccess": "Login successful!",
-    "welcomeBack": "Welcome back to Nexo-Trade",
-    "signupSuccess": "Account created!",
-    "checkEmail": "Please check your email to verify your account",
-    "loginError": "Login failed",
-    "signupError": "Signup failed",
-    "validationError": "Validation error",
-    "invalidCredentials": "Invalid email or password",
-    "enterEmail": "Enter email",
-    "enterEmailFirst": "Please enter your email first",
-    "resetEmailSent": "Reset email sent",
-    "checkEmailReset": "Please check your email for password reset instructions",
-    "resetError": "Reset failed",
-    "loggingIn": "Logging in...",
-    "signingUp": "Creating account...",
-    "passwordWeak": "Weak password",
-    "passwordMedium": "Medium strength",
-    "passwordStrong": "Strong password",
-    "logout": "Logout",
-    "logoutSuccess": "Logged out successfully",
-    "logoutDescription": "See you next time!",
-    "logoutError": "Logout failed",
-    "logoutConfirm": "Are you sure you want to logout?",
-    "logoutMessage": "You will be redirected to the login page.",
-    "cancel": "Cancel"
+  "performance": {
+    "accuracy": "Signal Accuracy",
+    "avgProfit": "Average Profit",
+    "description": "Historical performance metrics and simulated results",
+    "disclaimer": "These are sample backtest results for demonstration purposes only.",
+    "last30Days": "Last 30 days",
+    "lastMonth": "Last month",
+    "perSignal": "Per signal",
+    "successful": "Successful trades",
+    "title": "Performance / Backtest Info",
+    "totalSignals": "Total Signals",
+    "winRate": "Win Rate"
+  },
+  "profile": {
+    "actions": {
+      "getStarted": "Get Started",
+      "launchDashboard": "Launch Dashboard"
+    },
+    "fundamental": "Fundamental",
+    "high": "High",
+    "low": "Low",
+    "medium": "Medium",
+    "savePreferences": "Save Preferences",
+    "sheetDescription": "Customize your trading experience",
+    "technical": "Technical",
+    "toast": {
+      "savedDesc": "Your trading preferences have been updated",
+      "savedTitle": "Preferences Saved"
+    },
+    "title": "Trader Profile",
+    "tradingStyle": "Trading Style",
+    "weights": "Indicator Weights",
+    "riskTolerance": "Risk Tolerance"
+  },
+  "signals": {
+    "decision": "Decision",
+    "finalConfidence": "Final Confidence",
+    "finalScore": "Final Score",
+    "hold": "HOLD",
+    "sell": "SELL",
+    "buy": "BUY"
+  },
+  "tabs": {
+    "combined": "Combined",
+    "fundamental": "Fundamental",
+    "news-analysis": "News Analysis",
+    "reports": "Reports",
+    "signal-aggregator": "Signal Aggregator",
+    "technical": "Technical",
+    "user-technical": "Chart Analysis"
+  },
+  "tradingStyle": {
+    "long": "Long-term",
+    "mid": "Mid-term",
+    "short": "Short-term"
   },
   "tutorials": {
-    "title": "Learning Center",
-    "subtitle": "Personalized tutorials based on your experience level",
-    "backToDashboard": "Back to Dashboard",
     "all": "All Tutorials",
-    "videos": "Videos",
     "interactive": "Interactive",
     "reading": "Reading",
-    "start": "Start Tutorial",
     "review": "Review",
-    "genAlpha": "Beginner Friendly",
-    "genZ": "Intermediate Level",
-    "genY": "Advanced Content",
-    "genX": "Expert Level",
+    "start": "Start Tutorial",
+    "startLabel": "Start",
+    "startPlaceholder": "",
+    "startTitle": "",
+    "subtitle": "Personalized tutorials based on your experience level",
+    "system": {
+      "chart_basics": {
+        "description": "Learn how to read and interact with charts",
+        "steps": {
+          "chart": {
+            "content": "Charts show price trends over time. You can zoom and pan to explore.",
+            "title": "Chart Basics"
+          },
+          "indicators": {
+            "content": "Different colors and lines represent various technical indicators.",
+            "title": "Indicators"
+          },
+          "interaction": {
+            "content": "Try hovering over the chart to see detailed values!",
+            "title": "Interaction"
+          }
+        },
+        "title": "Understanding Charts"
+      },
+      "dashboard_basics": {
+        "description": "Learn the basics of navigating your crypto dashboard",
+        "steps": {
+          "ai_assistant": {
+            "content": "Need help? Click the AI assistant button anytime to ask questions!",
+            "title": "AI Assistant"
+          },
+          "coin_cards": {
+            "content": "Each card shows sentiment analysis for a specific cryptocurrency.",
+            "title": "Coin Cards"
+          },
+          "market_gauge": {
+            "content": "This gauge shows overall market risk. Green means bullish, red means bearish.",
+            "title": "Market Gauge"
+          },
+          "welcome": {
+            "content": "This dashboard shows you AI-driven crypto sentiment analysis. Let me show you around!",
+            "title": "Welcome!"
+          }
+        },
+        "title": "Dashboard Overview"
+      },
+      "signals_explained": {
+        "description": "Learn what buy/sell signals mean",
+        "steps": {
+          "aggregator": {
+            "content": "This combines fundamental and technical analysis to give you clear signals.",
+            "title": "Signal Aggregator"
+          },
+          "buy": {
+            "content": "Green signals suggest favorable buying conditions based on our AI analysis.",
+            "title": "Buy Signals"
+          },
+          "confidence": {
+            "content": "The confidence score shows how certain our AI is about the recommendation.",
+            "title": "Confidence"
+          },
+          "sell": {
+            "content": "Red signals suggest it might be time to consider selling or holding off.",
+            "title": "Sell Signals"
+          }
+        },
+        "title": "Understanding Signals"
+      }
+    },
+    "title": "Learning Center",
     "type": {
-      "video": "Video",
       "interactive": "Interactive",
-      "text": "Reading"
+      "text": "Reading",
+      "video": "Video"
+    },
+    "ui": {
+      "complete": "Complete",
+      "completeDesc": "Great job! You earned +20 XP",
+      "completeTitle": "Tutorial Complete! 🎉",
+      "next": "Next",
+      "skip": "Skip Tutorial",
+      "stepCounter": "Step {{current}} of {{total}}",
+      "wasHelpful": "Was this helpful?",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "videos": "Videos"
+  },
+  "welcome": {
+    "actions": {
+      "getStarted": "Get Started",
+      "launchDashboard": "Launch Dashboard"
+    },
+    "description": "Your dashboard has been optimized for {{generation}} experience",
+    "features": {
+      "adaptive": "Adaptive Experience",
+      "ai": "AI-Driven Analytics",
+      "realtime": "Real-time Signals"
+    },
+    "form": {
+      "ageLabel": "Your age",
+      "agePlaceholder": "25",
+      "genderLabel": "Gender (optional)",
+      "genderOptions": {
+        "female": "Female",
+        "male": "Male",
+        "other": "Other",
+        "preferNot": "Prefer not to say"
+      },
+      "nameLabel": "What should we call you? ✨",
+      "namePlaceholder": "Your preferred name",
+      "personality": {
+        "analyst": "🔍 Analytical - Dense data & details",
+        "casual": "✨ Casual - Simple & clear",
+        "expert": "⚡ Expert - Raw control & advanced",
+        "learner": "📚 Learner - Guided & educational"
+      },
+      "personalityLabel": "Your interaction style",
+      "selectPlaceholder": "Select",
+      "tradingExperienceLabel": "Trading experience",
+      "experience": {
+        "advanced": "🚀 Experienced trader",
+        "beginner": "🌱 Just starting out",
+        "intermediate": "📈 Some experience"
+      }
+    },
+    "generations": {
+      "genAlpha": "Gen Alpha",
+      "genG": "",
+      "genX": "Gen X",
+      "genY": "Gen Y (Millennials)",
+      "genZ": "Gen Z",
+      "unknown": "Your generation"
+    },
+    "greetings": {
+      "default": "Welcome back, {{name}}! 👋",
+      "genAlpha": "Hey {{name}}! 🎨",
+      "genZ": "Yo {{name}}! 👋"
+    },
+    "steps": {
+      "profile": {
+        "subtitle": "We'll adapt everything to match your needs",
+        "title": "Let's personalize your experience"
+      },
+      "welcome": {
+        "subtitle": "AI-powered insights tailored to your style",
+        "title": "Welcome to the Future of Trading"
+      }
+    },
+    "toast": {
+      "authIssueDesc": "Please sign in again.",
+      "authIssueTitle": "Authentication issue",
+      "backendSlowDesc": "Saved locally — continuing to dashboard.",
+      "backendSlowTitle": "Backend slow or offline",
+      "errorDesc": "Failed to save profile. Continuing to dashboard...",
+      "errorTitle": "Error",
+      "profileCreatedDesc": "Your adaptive dashboard is ready!",
+      "profileCreatedTitle": "Profile Created! 🎉",
+      "profileSaveTimeoutDesc": "Continuing locally.",
+      "profileSaveTimeoutTitle": "Profile save timed out",
+      "profileSaveWarningDesc": "Couldn't save profile to server. Continuing.",
+      "profileSaveWarningTitle": "Warning"
+    },
+    "validation": {
+      "invalidAge": "Please enter a valid age",
+      "nameRequired": "Please enter your name"
     }
-  }
+  },
+  "languageSwitcher": {
+    "toggle": "Change language",
+    "english": "English",
+    "persian": "فارسی"
+  },
+  "aggregator": {
+  "title": "Signal Aggregator",
+  "weights": "Weights",
+  "adjustWeights": "Adjust Signal Weights",
+  "weightsManaged": "Weights are managed in your Trader Profile settings.",
+  "fundamentalWeight": "Fundamental Weight",
+  "technicalWeight": "Technical Weight",
+  "exportCsv": "Export CSV",
+  "exportJson": "Export JSON",
+  "combinedScores": "Combined Scores",
+  "finalScore": "Final Score",
+  "confidence": "Confidence",
+  "signalBreakdown": "Signal Breakdown",
+  "finalScoreShort": "Score",
+  "enhancedTitle": "Enhanced Signal Aggregator",
+  "enhancedSubtitle": "Combining technical analysis and market sentiment",
+  "mode": {
+    "combined": "Combined",
+    "technical": "Technical",
+    "news": "News"
+  },
+  "overallTitle": "Overall Market Signal",
+  "overallDesc": {
+    "combined": "Based on technical + news analysis",
+    "technical": "Based on technical indicators only",
+    "news": "Based on news sentiment only"
+  },
+  "confidenceLabel": "Confidence: {{percent}}%",
+  "titles": {
+    "combined": "Combined Signal Strength",
+    "technical": "Technical Signal Strength",
+    "news": "News Sentiment Strength"
+  },
+  "signalStrength": "Signal Strength",
+  
+  "signalSources": "Signal Sources"
+  
+},
+"news": {
+  "title": "News Analysis Center",
+  "analyzeSelected": "Analyze Selected ({{count}})",
+  "analysisModalTitle": "AI News Analysis",
+  "analysisLoading": "Generating analysis...",
+  "analysisFallback": "Unable to generate analysis at this time.",
+  "analysisError": "Sorry, I couldn't analyze this news item right now. Please try again.",
+  "toasts": {
+    "noSelected": {
+      "title": "No news selected",
+      "description": "Please select at least one news item to analyze"
+    },
+    "analysisFailed": {
+      "title": "Analysis Failed",
+      "description": "Unable to connect to AI service"
+    }
+  },
+  "categories": {
+    "crypto": "Crypto",
+    "gold": "Gold",
+    "stocks": "Stocks",
+    "economy": "Economy"
+  },
+  "sentiment": {
+    "positive": "positive",
+    "negative": "negative",
+    "neutral": "neutral"
+  },
+  "impactLevels": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "impactSuffix": "impact"
+},
+
+"refresh": {
+  "button": "Refresh",
+  "buttonAria": "Refresh dashboard data",
+  "selectPlaceholder": "Auto-refresh",
+  "selectAria": "Auto refresh interval",
+  "options": {
+    "off": "Off",
+    "5": "5 min",
+    "15": "15 min",
+    "60": "60 min"
+  },
+  "updated": "Updated: {{time}}",
+  "next": "Next: {{time}}"
+},
+"reports": {
+  "panelTitle": "AI Analysis Reports",
+  "copy": "Copy",
+  "download": "Download",
+  "copyAria": "Copy full report to clipboard",
+  "downloadAria": "Download full report",
+  "copySuccessTitle": "Copied to clipboard",
+  "copySuccessDesc": "Full report copied successfully",
+  "downloadSuccessTitle": "Download started",
+  "downloadSuccessDesc": "Report download has started",
+  "filenamePrefix": "crypto-sentiment-report",
+  "reportTitle": "CRYPTO SENTIMENT PRO - AI ANALYSIS REPORT",
+  "generated": "Generated",
+  "articlesAnalyzed": "Articles Analyzed",
+  "marketSummaryHeader": "MARKET SUMMARY",
+  "individualCoinHeader": "INDIVIDUAL COIN ANALYSIS",
+  "sentiment": "Sentiment",
+  "score": "Score",
+  "confidence": "Confidence",
+  "evidenceSources": "Evidence Sources",
+  "analysis": "Analysis",
+  "keySources": "Key Sources",
+  "technicalHeader": "TECHNICAL INDICATORS",
+  "rsi": "RSI",
+  "macdSignal": "MACD Signal",
+  "shortMA": "Short MA",
+  "longMA": "Long MA",
+  "volatility": "Volatility",
+  "technicalScore": "Technical Score",
+  "currencyPrefix": "$",
+  "endOfReport": "END OF REPORT",
+  "reportDate": "Report Date",
+  "coinsTracked": "Coins Tracked",
+  "marketSummary": "Market Summary",
+  "detailedAnalysis": "Detailed Analysis"
+},
+"technical": {
+  "panelTitle": "Technical Analysis",
+    "taScoreLabel": "TA Score",
+    "rsi": "RSI",
+    "rsiStatus": {
+      "overbought": "Overbought",
+      "oversold": "Oversold",
+      "neutral": "Neutral"
+    },
+    "macdSignal": "MACD Signal",
+    "macdBullish": "Bullish",
+    "macdBearish": "Bearish",
+    "volatility": "Volatility",
+    "movingAverages": "Moving Averages",
+    "shortMA": "Short MA",
+    "longMA": "Long MA",
+    "keyLevels": "Key Levels",
+    "support": "Support",
+    "resistance": "Resistance",
+    "taHistoryTitle": "TA Score History",
+  "title": "Technical Analysis Zone",
+  "drawingTools": "Drawing Tools:",
+  "indicators": "Indicators:",
+  "tools": {
+    "trendline": "Trendline",
+    "fibonacci": "Fibonacci",
+    "support": "Support",
+    "resistance": "Resistance"
+  },
+  "saveAnalysis": "Save Analysis",
+  "analysisSavedTitle": "Analysis Saved",
+  "analysisSavedDesc": "{{coin}} chart analysis saved successfully",
+  "aiInterpretationButton": "AI Technical Interpretation",
+  "aiDialogTitle": "AI Chart Analysis",
+  "analyzing": "Analyzing...",
+  "analyzingPatterns": "Analyzing chart patterns...",
+  "analysisFallback": "Unable to generate analysis at this time.",
+  "analysisErrorFallback": "Sorry, I couldn't analyze the chart right now. Please try again.",
+  "analysisFailedTitle": "Analysis Failed",
+  "analysisFailedDesc": "Unable to connect to AI service",
+  "exportChart": "Export Chart",
+  "savedAnalysesTitle": "Saved Analyses"
+}
 }

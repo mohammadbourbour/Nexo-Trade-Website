@@ -29,6 +29,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 type DrawingTool = "trendline" | "fibonacci" | "support" | "resistance" | "none";
 type Indicator = "RSI" | "MACD" | "EMA" | "SMA" | "Bollinger";
@@ -43,6 +44,7 @@ interface SavedAnalysis {
 }
 
 export function TechnicalAnalysisZone() {
+  const { t, i18n } = useTranslation();
   const [selectedCoin, setSelectedCoin] = useState("BTC");
   const [activeTool, setActiveTool] = useState<DrawingTool>("none");
   const [activeIndicators, setActiveIndicators] = useState<Indicator[]>(["RSI", "MACD"]);
@@ -58,30 +60,41 @@ export function TechnicalAnalysisZone() {
   const indicators: Indicator[] = ["RSI", "MACD", "EMA", "SMA", "Bollinger"];
   const timeframes = ["1h", "4h", "1D", "1W"];
 
+  // TradingView locale mapping: اگر زبان fa باشه 'fa' وگرنه 'en'
+  const tradingViewLocale = i18n.language === "fa" ? "fa" : "en";
+
   // Initialize TradingView widget
   useEffect(() => {
     if (!tradingViewRef.current) return;
+
+    // remove any existing container children to avoid duplicates
+    const container = document.getElementById("tradingview_chart");
+    if (container) container.innerHTML = "";
 
     const script = document.createElement('script');
     script.src = 'https://s3.tradingview.com/tv.js';
     script.async = true;
     script.onload = () => {
-      if (window.TradingView) {
-        new window.TradingView.widget({
-          autosize: true,
-          symbol: `BINANCE:${selectedCoin}USDT`,
-          interval: timeframe,
-          timezone: "Etc/UTC",
-          theme: "dark",
-          style: "1",
-          locale: "en",
-          toolbar_bg: "#000000",
-          enable_publishing: false,
-          allow_symbol_change: true,
-          container_id: "tradingview_chart",
-          studies: activeIndicators.map(ind => ind.toLowerCase()),
-          hide_side_toolbar: false,
-        });
+      try {
+        if ((window as any).TradingView) {
+          new (window as any).TradingView.widget({
+            autosize: true,
+            symbol: `BINANCE:${selectedCoin}USDT`,
+            interval: timeframe,
+            timezone: "Etc/UTC",
+            theme: "dark",
+            style: "1",
+            locale: tradingViewLocale,
+            toolbar_bg: "#000000",
+            enable_publishing: false,
+            allow_symbol_change: true,
+            container_id: "tradingview_chart",
+            studies: activeIndicators.map(ind => ind.toLowerCase()),
+            hide_side_toolbar: false,
+          });
+        }
+      } catch (e) {
+        console.error("TradingView init error:", e);
       }
     };
     document.head.appendChild(script);
@@ -90,8 +103,11 @@ export function TechnicalAnalysisZone() {
       if (document.head.contains(script)) {
         document.head.removeChild(script);
       }
+      // try to cleanup container
+      const c = document.getElementById("tradingview_chart");
+      if (c) c.innerHTML = "";
     };
-  }, [selectedCoin, timeframe, activeIndicators]);
+  }, [selectedCoin, timeframe, activeIndicators, tradingViewLocale]);
 
   const handleSaveAnalysis = () => {
     const newAnalysis: SavedAnalysis = {
@@ -104,8 +120,8 @@ export function TechnicalAnalysisZone() {
     };
     setSavedAnalyses([newAnalysis, ...savedAnalyses]);
     toast({
-      title: "Analysis Saved",
-      description: `${selectedCoin} chart analysis saved successfully`,
+      title: t("technical.analysisSavedTitle"),
+      description: t("technical.analysisSavedDesc", { coin: selectedCoin }),
     });
   };
 
@@ -113,10 +129,10 @@ export function TechnicalAnalysisZone() {
     setShowAIDialog(true);
     setIsAnalyzing(true);
     setAiAnalysis("");
-    
+
     try {
-      const analysisPrompt = `Analyze the ${selectedCoin}/USDT chart on ${timeframe} timeframe with the following indicators active: ${activeIndicators.join(", ")}. 
-      
+      const analysisPrompt = `Analyze the ${selectedCoin}/USDT chart on ${timeframe} timeframe with the following indicators active: ${activeIndicators.join(", ")}.
+
 Provide a detailed technical analysis including:
 1. Current trend direction and strength
 2. Key support and resistance levels
@@ -136,13 +152,13 @@ Be specific and actionable.`;
 
       if (error) throw error;
 
-      setAiAnalysis(data.response || "Unable to generate analysis at this time.");
+      setAiAnalysis(data?.response || t("technical.analysisFallback"));
     } catch (error) {
       console.error('AI Analysis error:', error);
-      setAiAnalysis("Sorry, I couldn't analyze the chart right now. Please try again.");
+      setAiAnalysis(t("technical.analysisErrorFallback"));
       toast({
-        title: "Analysis Failed",
-        description: "Unable to connect to AI service",
+        title: t("technical.analysisFailedTitle"),
+        description: t("technical.analysisFailedDesc"),
         variant: "destructive"
       });
     } finally {
@@ -171,7 +187,7 @@ Be specific and actionable.`;
           animate={{ opacity: 1, x: 0 }}
           className="text-2xl font-bold gradient-text"
         >
-          Technical Analysis Zone
+          {t("technical.title")}
         </motion.h2>
         <div className="flex items-center gap-2 flex-wrap">
           <Select value={selectedCoin} onValueChange={setSelectedCoin}>
@@ -214,22 +230,22 @@ Be specific and actionable.`;
           <div className="space-y-4">
             {/* Drawing Tools */}
             <div className="flex flex-wrap items-center gap-2 pb-4 border-b border-border">
-              <span className="text-sm text-muted-foreground mr-2">Drawing Tools:</span>
+              <span className="text-sm text-muted-foreground mr-2">{t("technical.drawingTools")}</span>
               {[
-                { tool: "trendline", icon: PenLine, label: "Trendline" },
-                { tool: "fibonacci", icon: Ruler, label: "Fibonacci" },
-                { tool: "support", icon: TrendingUp, label: "Support" },
-                { tool: "resistance", icon: TrendingDown, label: "Resistance" },
-              ].map(({ tool, icon: Icon, label }) => (
+                { tool: "trendline", icon: PenLine, labelKey: "technical.tools.trendline" },
+                { tool: "fibonacci", icon: Ruler, labelKey: "technical.tools.fibonacci" },
+                { tool: "support", icon: TrendingUp, labelKey: "technical.tools.support" },
+                { tool: "resistance", icon: TrendingDown, labelKey: "technical.tools.resistance" },
+              ].map(({ tool, icon: Icon, labelKey }) => (
                 <motion.div key={tool} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
                     variant={activeTool === tool ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setActiveTool(activeTool === tool ? "none" : tool as DrawingTool)}
+                    onClick={() => setActiveTool(activeTool === tool ? "none" : (tool as DrawingTool))}
                     className={activeTool === tool ? "neon-glow" : "hover:border-primary/50"}
                   >
                     <Icon className="w-4 h-4 mr-2" />
-                    {label}
+                    {t(labelKey)}
                   </Button>
                 </motion.div>
               ))}
@@ -242,7 +258,7 @@ Be specific and actionable.`;
 
           {/* Indicators Panel */}
           <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-border">
-            <span className="text-sm text-muted-foreground mr-2">Indicators:</span>
+            <span className="text-sm text-muted-foreground mr-2">{t("technical.indicators")}</span>
             {indicators.map(indicator => (
               <motion.div key={indicator} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
@@ -262,7 +278,7 @@ Be specific and actionable.`;
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button onClick={handleSaveAnalysis} className="hover:neon-glow">
                 <Save className="w-4 h-4 mr-2" />
-                Save Analysis
+                {t("technical.saveAnalysis")}
               </Button>
             </motion.div>
             <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
@@ -275,7 +291,7 @@ Be specific and actionable.`;
                     disabled={isAnalyzing}
                   >
                     <Sparkles className="w-4 h-4 mr-2" />
-                    {isAnalyzing ? "Analyzing..." : "AI Technical Interpretation"}
+                    {isAnalyzing ? t("technical.analyzing") : t("technical.aiInterpretationButton")}
                   </Button>
                 </motion.div>
               </DialogTrigger>
@@ -288,7 +304,7 @@ Be specific and actionable.`;
                     >
                       <Sparkles className="w-5 h-5 text-primary" />
                     </motion.div>
-                    AI Chart Analysis
+                    {t("technical.aiDialogTitle")}
                   </DialogTitle>
                 </DialogHeader>
                 <div className="mt-4">
@@ -314,7 +330,7 @@ Be specific and actionable.`;
                           transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
                           className="w-2 h-2 bg-primary rounded-full"
                         />
-                        <span className="ml-2">Analyzing chart patterns...</span>
+                        <span className="ml-2">{t("technical.analyzingPatterns")}</span>
                       </motion.div>
                     ) : (
                       aiAnalysis
@@ -326,7 +342,7 @@ Be specific and actionable.`;
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button variant="outline" className="hover:border-primary/50">
                 <Download className="w-4 h-4 mr-2" />
-                Export Chart
+                {t("technical.exportChart")}
               </Button>
             </motion.div>
           </div>
@@ -342,7 +358,7 @@ Be specific and actionable.`;
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <Card className="glass-card p-6 hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300">
-            <h3 className="text-lg font-semibold mb-4 gradient-text">Saved Analyses</h3>
+            <h3 className="text-lg font-semibold mb-4 gradient-text">{t("technical.savedAnalysesTitle")}</h3>
             <div className="space-y-3">
               {savedAnalyses.map((analysis, index) => (
                 <motion.div

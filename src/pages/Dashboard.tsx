@@ -1,12 +1,16 @@
+// src/pages/Dashboard.tsx
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { CryptoSentimentProDashboard } from "@/components/CryptoSentimentProDashboard";
 import mockData from "@/mocks/sample_data.json";
 import { Session } from "@supabase/supabase-js";
+import { useTranslation } from "react-i18next";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   // null = unknown, true = has profile, false = no profile
@@ -15,6 +19,23 @@ export default function Dashboard() {
 
   // prevent duplicate profile checks for same user
   const lastCheckedUserRef = useRef<string | null>(null);
+
+  // ensure document dir/lang reflect current i18n (defensive; config.ts already sets this)
+  useEffect(() => {
+    const applyDir = (lng: string) => {
+      document.documentElement.dir = lng === "fa" ? "rtl" : "ltr";
+      document.documentElement.lang = lng;
+    };
+    applyDir(i18n.language || "en");
+    const off = i18n.on("languageChanged", applyDir);
+    return () => {
+      try {
+        i18n.off("languageChanged", applyDir);
+      } catch {
+        // some i18n versions use .off, some return unsubscribe; best-effort
+      }
+    };
+  }, [i18n]);
 
   useEffect(() => {
     // set up auth listener
@@ -105,9 +126,14 @@ export default function Dashboard() {
 
   // while we don't know profile or still loading => show spinner (no onboarding flash)
   if (loading || checkingProfile || hasProfile === null) {
+    const isRTL = i18n.language === "fa";
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center" dir={isRTL ? "rtl" : "ltr"}>
+        <div role="status" aria-live="polite" aria-label={t("dashboard.loading")}>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary" />
+          {/* hidden textual label (accessible) */}
+          <span className="sr-only">{t("dashboard.loading")}</span>
+        </div>
       </div>
     );
   }
@@ -118,6 +144,7 @@ export default function Dashboard() {
 
   // if we have confirmed the user has a profile -> show dashboard
   if (hasProfile === true) {
+    // pass callback for onboarding completion in case other components use it
     return <CryptoSentimentProDashboard data={mockData} />;
   }
 
