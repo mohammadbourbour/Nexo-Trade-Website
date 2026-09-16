@@ -100,8 +100,8 @@ No backend package is required.
 ## 📦 Setup | راه‌اندازی
 
 ```bash
-git clone https://github.com/mohammadbourbour/Nexo-Trade-website.git
-cd Nexo-Trade-website
+git clone https://github.com/mohammadbourbour/Nexo-Trade-Website.git
+cd Nexo-Trade-Website
 npm install
 npm run dev
 ```
@@ -145,7 +145,7 @@ nexo-trade/
 │   ├── i18n/                 # EN / FA
 │   └── mocks/sample_data.json
 ├── public/
-└── docs/
+└── README.md
 ```
 
 ---
