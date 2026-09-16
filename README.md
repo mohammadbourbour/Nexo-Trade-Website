@@ -97,14 +97,15 @@
 
 ```bash
 # Clone the repository | کلون کردن مخزن
-git clone https://github.com/yourusername/nexo-trade.git
-cd nexo-trade
+git clone https://github.com/mohammadbourbour/Nexo-Trade-website.git
+cd Nexo-Trade-website
 
 # Install dependencies | نصب وابستگی‌ها
 npm install
 
 # Set up environment variables | تنظیم متغیرهای محیطی
-# (Lovable Cloud handles this automatically)
+cp .env.example .env
+# Fill in VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, and VITE_SUPABASE_PROJECT_ID
 
 # Start development server | شروع سرور توسعه
 npm run dev
@@ -580,8 +581,8 @@ MIT License - See [LICENSE](LICENSE) file for details
 - 💬 Discord: [Join Community](https://discord.gg/nexotrade)
 
 ### For Developers | برای توسعه‌دهندگان
-- 🐛 Report bugs: [GitHub Issues](https://github.com/yourusername/nexo-trade/issues)
-- 💡 Feature requests: [GitHub Discussions](https://github.com/yourusername/nexo-trade/discussions)
+- 🐛 Report bugs: [GitHub Issues](https://github.com/mohammadbourbour/Nexo-Trade-website/issues)
+- 💡 Feature requests: [GitHub Discussions](https://github.com/mohammadbourbour/Nexo-Trade-website/discussions)
 - 📖 Documentation: See `docs/` folder
 
 ---
