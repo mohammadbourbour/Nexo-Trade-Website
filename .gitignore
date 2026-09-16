@@ -12,10 +12,9 @@ dist
 dist-ssr
 *.local
 
-# Environment (keep secrets out of git)
+# Environment
 .env
 .env.*
-!.env.example
 
 # Editor directories and files
 .vscode/*

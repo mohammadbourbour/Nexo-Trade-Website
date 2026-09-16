@@ -67,10 +67,14 @@
     "signup": "Sign Up",
     "signupError": "Signup failed",
     "signupSuccess": "Account created!",
+    "validationError": "Validation error",
     "welcome": "Welcome",
     "welcomeBack": "Welcome back to Nexo-Trade",
     "welcomeDescription": "Sign in to access your trading dashboard",
-    "rememberMe": "Remember Me"
+    "rememberMe": "Remember Me",
+    "demoNotice": "Website-only demo: accounts, profiles, and assistant replies are stored in this browser. There is no live backend.",
+    "signupLocalDesc": "Your demo account was saved locally in this browser.",
+    "resetLocalDesc": "Password reset is simulated in this frontend-only demo. Sign in with the password you already created."
   },
   "category": {
     "ai": {

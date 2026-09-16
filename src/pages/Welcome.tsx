@@ -13,10 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useUserProfile, ExperienceLevel, Personality } from "@/hooks/useUserProfile";
+import { useUserProfile, ExperienceLevel, Personality, generationFromAge, applyGenerationTheme } from "@/hooks/useUserProfile";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { demoAuth, demoDb } from "@/lib/demo-store";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
@@ -68,59 +68,20 @@ export default function Welcome() {
     },
   ];
 
-  // helper: convert Supabase builder (PostgrestFilterBuilder / PostgrestBuilder) to a real Promise
-  const exec = <T,>(builderLike: any): Promise<T> =>
-    new Promise((resolve, reject) => {
-      try {
-        // many supabase builders return `.then`-able objects; use that if available
-        if (typeof builderLike?.then === "function") {
-          builderLike.then((r: any) => resolve(r)).catch((e: any) => reject(e));
-        } else {
-          // fallback: resolve directly (for getSession/getUser results etc)
-          resolve(builderLike as T);
-        }
-      } catch (err) {
-        reject(err);
-      }
-    });
-
-  const withTimeout = async <T,>(p: Promise<T>, ms = 2000): Promise<T | { timeout: true }> => {
-    return await Promise.race<T | { timeout: true }>([
-      p,
-      new Promise<{ timeout: true }>((res) => setTimeout(() => res({ timeout: true }), ms)),
-    ]);
-  };
-
   useEffect(() => {
     mountedRef.current = true;
 
     const checkSessionAndProfile = async () => {
       try {
-        // get session (supabase.auth.getSession returns a real Promise)
-        const sessionResult: any = await withTimeout(supabase.auth.getSession(), 2000);
-        if ((sessionResult as any).timeout) {
-          console.warn("[Welcome] session check timed out; leaving on Welcome");
-          return;
-        }
-        const { data: { session } } = sessionResult as any;
+        const { data: { session } } = await demoAuth.getSession();
         if (!session) {
           navigate("/auth");
           return;
         }
 
-        // fetch profile: wrap builder into promise with exec()
-        const profilePromise = exec<any>(
-          supabase.from("user_profiles").select("id").eq("user_id", session.user.id).maybeSingle()
-        );
-        const profileResult: any = await withTimeout(profilePromise, 2000);
-        if ((profileResult as any).timeout) {
-          console.warn("[Welcome] profile fetch timed out; assuming no profile");
-          return;
-        }
-
-        if (profileResult?.data) {
-          // profile exists -> redirect to dashboard
-          if (mountedRef.current) navigate("/dashboard");
+        const profile = demoDb.getProfile(session.user.id);
+        if (profile && mountedRef.current) {
+          navigate("/dashboard");
         }
       } catch (err) {
         console.error("[Welcome] error checking session/profile:", err);
@@ -169,20 +130,8 @@ export default function Welcome() {
     setErrors({ preferredName: "", age: "" });
 
     try {
-      // get user
-      const maybeUser: any = await withTimeout(exec<any>(supabase.auth.getUser()), 2000);
-      if ((maybeUser as any).timeout) {
-        toast({
-          title: t("welcome.toast.backendSlowTitle"),
-          description: t("welcome.toast.backendSlowDesc"),
-        });
-        completeOnboarding();
-        if (mountedRef.current) navigate("/dashboard");
-        return;
-      }
-
-      const { data: { user }, error: userErr } = maybeUser as any;
-      if (userErr || !user) {
+      const { data: { user } } = await demoAuth.getUser();
+      if (!user) {
         toast({
           title: t("welcome.toast.authIssueTitle"),
           description: t("welcome.toast.authIssueDesc"),
@@ -192,22 +141,16 @@ export default function Welcome() {
         return;
       }
 
-      // compute generation & skill
-      const currentYear = new Date().getFullYear();
-      const birthYear = currentYear - ageNum;
-      const generation =
-        birthYear >= 2010 ? "genAlpha" : birthYear >= 1997 ? "genZ" : birthYear >= 1981 ? "genY" : "genX";
-
-      const skill_level: "beginner" | "intermediate" | "advanced" | "expert" =
+      const generation = generationFromAge(ageNum);
+      const skill_level =
         formData.experienceLevel === "intermediate"
           ? "intermediate"
           : formData.experienceLevel === "advanced"
           ? "advanced"
           : "beginner";
-
       const skill_score = formData.experienceLevel === "intermediate" ? 5 : formData.experienceLevel === "advanced" ? 8 : 2;
 
-      const profilePayload = {
+      demoDb.upsertProfile({
         user_id: user.id,
         preferred_name: formData.preferredName.trim(),
         age: ageNum,
@@ -215,37 +158,16 @@ export default function Welcome() {
         skill_level,
         skill_score,
         personality: formData.personality,
-      };
+      });
 
-      const prefsPayload = {
+      demoDb.upsertPrefs({
         user_id: user.id,
         chart_indicators: [],
         layout_config: {},
         favorite_sections: [],
-      };
+      });
 
-      // upsert profile (wrap builder in exec)
-      const profileRes: any = await withTimeout(exec<any>(supabase.from("user_profiles").upsert(profilePayload)), 2000);
-      if ((profileRes as any).timeout) {
-        toast({ title: t("welcome.toast.profileSaveTimeoutTitle"), description: t("welcome.toast.profileSaveTimeoutDesc") });
-        completeOnboarding();
-        if (mountedRef.current) navigate("/dashboard");
-        return;
-      }
-      if (profileRes?.error) {
-        console.error("[Welcome] profile upsert error:", profileRes.error);
-        toast({ title: t("welcome.toast.profileSaveWarningTitle") || t("welcome.toast.profileSaveTimeoutTitle"), description: t("welcome.toast.profileSaveWarningDesc") || t("welcome.toast.profileSaveTimeoutDesc"), variant: "destructive" });
-        completeOnboarding();
-        if (mountedRef.current) navigate("/dashboard");
-        return;
-      }
-
-      // upsert prefs (non-blocking)
-      const prefsRes: any = await withTimeout(exec<any>(supabase.from("dashboard_preferences").upsert(prefsPayload)), 2000);
-      if ((prefsRes as any).timeout || prefsRes?.error) {
-        console.warn("[Welcome] prefs upsert failed or timed out:", prefsRes?.error);
-      }
-
+      applyGenerationTheme(generation);
       toast({ title: t("welcome.toast.profileCreatedTitle"), description: t("welcome.toast.profileCreatedDesc") });
       completeOnboarding();
       if (mountedRef.current) setTimeout(() => navigate("/dashboard"), 300);

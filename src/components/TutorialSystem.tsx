@@ -4,7 +4,7 @@ import { X, ChevronRight, CheckCircle, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdaptiveContent } from '@/hooks/useAdaptiveContent';
 import { useBehaviorTracking } from '@/hooks/useBehaviorTracking';
-import { supabase } from '@/integrations/supabase/client';
+import { demoAuth, demoDb } from "@/lib/demo-store";
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -141,18 +141,11 @@ export function TutorialSystem({ currentSection }: TutorialSystemProps) {
 
   const loadCompletedTutorials = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await demoAuth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
-        .from('tutorial_progress')
-        .select('tutorial_id')
-        .eq('user_id', user.id)
-        .eq('completed', true);
-
-      if (error) throw error;
-
-      setCompletedTutorials(new Set((data || []).map((t: any) => t.tutorial_id)));
+      const data = demoDb.getCompletedTutorials(user.id);
+      setCompletedTutorials(new Set(data.map((item) => item.tutorial_id)));
     } catch (error) {
       console.error('Error loading tutorial progress:', error);
     }
@@ -201,12 +194,12 @@ export function TutorialSystem({ currentSection }: TutorialSystemProps) {
     if (!activeTutorial) return;
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await demoAuth.getUser();
       if (!user) return;
 
       const duration = Math.floor((Date.now() - startTime) / 1000);
 
-      await supabase.from('tutorial_progress').upsert({
+      demoDb.upsertTutorial({
         user_id: user.id,
         tutorial_id: activeTutorial.id,
         completed: true,
@@ -235,14 +228,10 @@ export function TutorialSystem({ currentSection }: TutorialSystemProps) {
     if (!activeTutorial) return;
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await demoAuth.getUser();
       if (!user) return;
 
-      await supabase
-        .from('tutorial_progress')
-        .update({ was_helpful: helpful })
-        .eq('user_id', user.id)
-        .eq('tutorial_id', activeTutorial.id);
+      demoDb.updateTutorial(user.id, activeTutorial.id, { was_helpful: helpful });
     } catch (error) {
       console.error('Error submitting feedback:', error);
     }
