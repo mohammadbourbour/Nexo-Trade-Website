@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { supabase } from "@/integrations/supabase/client";
+import { demoAuth } from "@/lib/demo-store";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -31,7 +31,7 @@ export function LogoutButton() {
     setIsSigningOut(true);
 
     try {
-      const { error } = await supabase.auth.signOut();
+      const { error } = await demoAuth.signOut();
       if (error) throw error;
 
       // clear local profile state

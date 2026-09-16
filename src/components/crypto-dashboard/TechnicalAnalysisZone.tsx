@@ -28,7 +28,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { supabase } from "@/integrations/supabase/client";
+import { demoAiChat } from "@/lib/demo-ai";
 import { useTranslation } from "react-i18next";
 
 type DrawingTool = "trendline" | "fibonacci" | "support" | "resistance" | "none";
@@ -143,14 +143,10 @@ Provide a detailed technical analysis including:
 
 Be specific and actionable.`;
 
-      const { data, error } = await supabase.functions.invoke('ai-chat', {
-        body: {
-          messages: [{ role: "user", content: analysisPrompt }],
-          type: "technical"
-        }
+      const data = await demoAiChat({
+        messages: [{ role: "user", content: analysisPrompt }],
+        type: "technical",
       });
-
-      if (error) throw error;
 
       setAiAnalysis(data?.response || t("technical.analysisFallback"));
     } catch (error) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { supabase } from "@/integrations/supabase/client";
+import { demoAuth, type DemoSession } from "@/lib/demo-store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, BookOpen, Video, CheckCircle2, Clock, Sparkles } from "lucide-react";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { motion } from "framer-motion";
-import { Session } from "@supabase/supabase-js";
 
 const tutorialsByGeneration = {
   genAlpha: [
@@ -122,7 +121,7 @@ export default function Tutorials() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { userProfile } = useUserProfile();
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, setSession] = useState<DemoSession | null>(null);
   const [loading, setLoading] = useState(true);
 
   const generation = userProfile.generation || "genZ";
@@ -130,17 +129,17 @@ export default function Tutorials() {
   const isRTL = i18n.language === "fa";
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setSession(session);
-      if (!session) {
+    const { data: { subscription } } = demoAuth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      if (!nextSession) {
         navigate("/auth");
       }
       setLoading(false);
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (!session) {
+    demoAuth.getSession().then(({ data: { session: current } }) => {
+      setSession(current);
+      if (!current) {
         navigate("/auth");
       }
       setLoading(false);

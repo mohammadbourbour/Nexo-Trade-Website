@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAdaptiveContent } from '@/hooks/useAdaptiveContent';
 import { useBehaviorTracking } from '@/hooks/useBehaviorTracking';
-import { supabase } from '@/integrations/supabase/client';
+import { demoAiChat } from '@/lib/demo-ai';
+import { demoDb } from '@/lib/demo-store';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
@@ -95,15 +96,12 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
       };
 
       // Call AI assistant edge function
-      const { data, error } = await supabase.functions.invoke('ai-assistant', {
-        body: {
-          message: input,
-          context,
-          history: messages.slice(-5), // Last 5 messages for context
-        },
+      const data = await demoAiChat({
+        message: input,
+        type: "assistant",
+        context,
+        messages: messages.slice(-5).map((item) => ({ role: item.role, content: item.content })),
       });
-
-      if (error) throw error;
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -135,10 +133,7 @@ export function EnhancedAIAssistant({ currentSection = 'dashboard', contextData 
   const handleFeedback = async (conversationId: string | undefined, helpful: boolean) => {
     if (!conversationId) return;
     try {
-      await supabase
-        .from('ai_conversations')
-        .update({ was_helpful: helpful })
-        .eq('id', conversationId);
+      demoDb.updateConversation(conversationId, { was_helpful: helpful });
 
       toast?.({
         title: helpful ? t('feedback.thanksHelpful') : t('feedback.thanksNotHelpful'),

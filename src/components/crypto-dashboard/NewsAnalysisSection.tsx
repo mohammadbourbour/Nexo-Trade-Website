@@ -19,6 +19,7 @@ import {
 import { Sparkles, ExternalLink, TrendingUp, TrendingDown, Newspaper } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { demoAiChat } from "@/lib/demo-ai";
 
 type NewsCategory = "Crypto" | "Gold" | "Stocks" | "Economy";
 
@@ -131,8 +132,6 @@ export function NewsAnalysisSection() {
     setAiAnalysisResult("");
 
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
-
       const selectedItems = newsData.filter((news) => selectedNews.has(news.id));
 
       const analysisPrompt = `Analyze these ${selectedItems.length} news items together and provide a comprehensive market analysis:
@@ -159,14 +158,10 @@ Provide:
 
 Be detailed and actionable with specific entry/exit recommendations.`;
 
-      const { data, error } = await supabase.functions.invoke("ai-chat", {
-        body: {
-          messages: [{ role: "user", content: analysisPrompt }],
-          type: "news",
-        },
+      const data = await demoAiChat({
+        messages: [{ role: "user", content: analysisPrompt }],
+        type: "news",
       });
-
-      if (error) throw error;
 
       setAiAnalysisResult(data.response || t("news.analysisFallback"));
     } catch (error) {
@@ -185,8 +180,6 @@ Be detailed and actionable with specific entry/exit recommendations.`;
     setAiAnalysisResult("");
 
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
-
       const analysisPrompt = `Analyze this ${newsItem.category} news item and provide detailed market impact analysis:
 
 Title: ${newsItem.title}
@@ -204,14 +197,10 @@ Provide:
 
 Be specific and actionable.`;
 
-      const { data, error } = await supabase.functions.invoke("ai-chat", {
-        body: {
-          messages: [{ role: "user", content: analysisPrompt }],
-          type: "news",
-        },
+      const data = await demoAiChat({
+        messages: [{ role: "user", content: analysisPrompt }],
+        type: "news",
       });
-
-      if (error) throw error;
 
       setAiAnalysisResult(data.response || t("news.analysisFallback"));
     } catch (error) {

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { demoAiChat } from "@/lib/demo-ai";
 
 interface Message {
   id: string;
@@ -65,18 +66,12 @@ export function AIAssistantPanel() {
     setIsThinking(true);
 
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
-
-      const { data, error } = await supabase.functions.invoke("ai-chat", {
-        body: {
-          messages: messages
-            .concat(userMessage)
-            .map((m) => ({ role: m.role, content: m.content })),
-          type: "general",
-        },
+      const data = await demoAiChat({
+        messages: messages
+          .concat(userMessage)
+          .map((m) => ({ role: m.role, content: m.content })),
+        type: "general",
       });
-
-      if (error) throw error;
 
       const aiContent = data?.response || t("ai.errorProcessing");
       const aiMessage: Message = {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { demoAuth, demoDb } from "@/lib/demo-store";
 
 export type Generation = "genAlpha" | "genZ" | "genY" | "genX" | null;
 export type ExperienceLevel = "beginner" | "intermediate" | "advanced";
@@ -25,6 +25,23 @@ const DEFAULT_PROFILE: UserProfile = {
   preferredName: null,
 };
 
+const THEME_CLASSES = ["theme-genAlpha", "theme-genZ", "theme-genY", "theme-genX"];
+
+export function generationFromAge(age: number): Generation {
+  const birthYear = new Date().getFullYear() - age;
+  if (birthYear >= 2010) return "genAlpha";
+  if (birthYear >= 1997) return "genZ";
+  if (birthYear >= 1981) return "genY";
+  return "genX";
+}
+
+export function applyGenerationTheme(generation: Generation | null) {
+  document.body.classList.remove(...THEME_CLASSES);
+  if (generation) {
+    document.body.classList.add(`theme-${generation}`);
+  }
+}
+
 export function useUserProfile() {
   const [userProfile, setUserProfile] = useState<UserProfile>(DEFAULT_PROFILE);
   const [loading, setLoading] = useState(true);
@@ -32,13 +49,12 @@ export function useUserProfile() {
   useEffect(() => {
     loadUserProfile();
 
-    // Listen to auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
+    const { data: { subscription } } = demoAuth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
         loadUserProfile();
-      } else if (event === 'SIGNED_OUT') {
+      } else if (event === "SIGNED_OUT") {
         setUserProfile(DEFAULT_PROFILE);
-        document.body.classList.remove("theme-genAlpha", "theme-genZ", "theme-genY", "theme-genX");
+        applyGenerationTheme(null);
       }
     });
 
@@ -47,19 +63,16 @@ export function useUserProfile() {
 
   const loadUserProfile = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const { data: { user } } = await demoAuth.getUser();
+
       if (!user) {
         setUserProfile(DEFAULT_PROFILE);
+        applyGenerationTheme(null);
         setLoading(false);
         return;
       }
 
-      const { data: profile } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
+      const profile = demoDb.getProfile(user.id);
 
       if (profile) {
         const loadedProfile: UserProfile = {
@@ -67,23 +80,19 @@ export function useUserProfile() {
           age: profile.age,
           gender: null,
           generation: profile.generation as Generation,
-          experienceLevel: (profile.skill_level || 'beginner') as ExperienceLevel,
+          experienceLevel: (profile.skill_level || "beginner") as ExperienceLevel,
           personality: profile.personality as Personality,
           preferredName: profile.preferred_name,
         };
-        
+
         setUserProfile(loadedProfile);
-        
-        // Apply generation-specific class to body
-        if (loadedProfile.generation) {
-          document.body.classList.remove("theme-genAlpha", "theme-genZ", "theme-genY", "theme-genX");
-          document.body.classList.add(`theme-${loadedProfile.generation}`);
-        }
+        applyGenerationTheme(loadedProfile.generation);
       } else {
         setUserProfile(DEFAULT_PROFILE);
+        applyGenerationTheme(null);
       }
     } catch (error) {
-      console.error('Error loading user profile:', error);
+      console.error("Error loading user profile:", error);
       setUserProfile(DEFAULT_PROFILE);
     } finally {
       setLoading(false);
@@ -93,23 +102,12 @@ export function useUserProfile() {
   const updateProfile = (updates: Partial<UserProfile>) => {
     setUserProfile((prev) => {
       const newProfile = { ...prev, ...updates };
-      
-      // Auto-detect generation based on age
+
       if (updates.age !== undefined && updates.age !== null) {
-        const currentYear = new Date().getFullYear();
-        const birthYear = currentYear - updates.age;
-        
-        if (birthYear >= 2010) {
-          newProfile.generation = "genAlpha";
-        } else if (birthYear >= 1997) {
-          newProfile.generation = "genZ";
-        } else if (birthYear >= 1981) {
-          newProfile.generation = "genY";
-        } else {
-          newProfile.generation = "genX";
-        }
+        newProfile.generation = generationFromAge(updates.age);
       }
-      
+
+      applyGenerationTheme(newProfile.generation);
       return newProfile;
     });
   };
@@ -120,7 +118,7 @@ export function useUserProfile() {
 
   const resetProfile = () => {
     setUserProfile(DEFAULT_PROFILE);
-    document.body.classList.remove("theme-genAlpha", "theme-genZ", "theme-genY", "theme-genX");
+    applyGenerationTheme(null);
   };
 
   return {
